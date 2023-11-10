@@ -7,9 +7,9 @@
       "request": "launch",
       "args": [],
       "stopAtEntry": false,
-      "externalConsole": true,
-      "cwd": "c:/Users/Boust/OneDrive/Documents/School/Bac 2/Introduction à l'algorithmique numérique/MATH0500-Projet",
-      "program": "c:/Users/Boust/OneDrive/Documents/School/Bac 2/Introduction à l'algorithmique numérique/MATH0500-Projet/build/Debug/outDebug",
+      "externalConsole": false,
+      "cwd": "/home/zenixtu/Bac 2/Q1/Algorithmique numérique/MATH0500-Projet",
+      "program": "/home/zenixtu/Bac 2/Q1/Algorithmique numérique/MATH0500-Projet/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
