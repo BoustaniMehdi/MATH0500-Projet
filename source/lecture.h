@@ -31,7 +31,7 @@ int get_nblignes(CSC *matrice);
 int get_nbcols(CSC *matrice);
 
 
-
+// CSC *init_matrice(int nbLignes, int nbCols, int nz, int *p, int *i, double *x );
 CSC *creer_matrice(char *fichierInput);
 
 
