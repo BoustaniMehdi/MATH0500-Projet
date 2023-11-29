@@ -113,3 +113,33 @@ CSC *creer_matrice(char *fichierInput){
 
     return matrice;
 }
+
+
+
+double *matrice_vecteur(CSC *matCreuse, double *vect, int n){
+    assert(matCreuse != NULL && vect != NULL);
+    if (matCreuse->nbLignes != n){
+        printf("La multiplication n'est pas définie entre la matrice et le vectuer\n");
+        return NULL;
+    }
+    // le vecteur produit on initialise tout à 0
+    double *y = calloc(n, sizeof(double));
+    if (!y){
+        printf("Echec du produit MATRICE x VECTEUR : Allocation du vecteur produit échouée\n");
+        return NULL;
+    }
+    // ----------------------------------Indexing starting at 0 ------------------------------------- //
+    // for (int i = 0; i < n; i++){
+    //     for (int j = matCreuse->p[i]; j <= matCreuse->p[i+1]-1; j++){
+    //         y[matCreuse->i[j]] += vect[i] * matCreuse->x[j]; 
+    //     }
+    // }
+
+    // ----------------------------------Indexing starting at 1 ------------------------------------- //
+    for (int i = 0; i < n; i++){ // parcourt les colonnes du vecteur
+        for (int j = matCreuse->p[i]-1; j < matCreuse->p[i+1]-1; j++){ // parcourt la colonne i
+            y[matCreuse->i[j]-1] += vect[i] * matCreuse->x[j]; 
+        }
+    }
+    return y;
+}

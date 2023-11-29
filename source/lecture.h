@@ -31,6 +31,8 @@ typedef struct{
 // CSC *init_matrice(int nbLignes, int nbCols, int nz, int *p, int *i, double *x );
 CSC *creer_matrice(char *fichierInput);
 
+double *matrice_vecteur(CSC *matCreuse, double *vect, int n); // n = la taille du vecteur
+
 
 #endif // __LECTURE__
 
