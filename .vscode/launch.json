@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/zenixtu/Bac 2/Q1/Algorithmique numérique/MATH0500-Projet",
-      "program": "/home/zenixtu/Bac 2/Q1/Algorithmique numérique/MATH0500-Projet/build/Debug/outDebug",
+      "cwd": ".",
+      "program": "build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
