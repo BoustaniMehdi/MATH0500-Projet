@@ -1,12 +1,3 @@
-/*
- * Auteurs : Boustani Mehdi, Alabashityalshaier Abdelkader -- Université de Liege
- * Projet de programmation MATH0500
- * Fichier lecture.h
- */
-
-#ifndef __LECTURE__
-#define __LECTURE__
-
 /**
  * \file lecture.h
  * \brief Header pour la lecture des fichiers d'input et la création de la matrice creuse ou vecteur creux correspondant
@@ -17,6 +8,19 @@
  * Crée une matrice creuse ou un vecteur creux correspondant au fichier d'input, ainsi la structure de donnée dans laquelle nous stockons ceux-ci
  */
 
+#ifndef __LECTURE__
+#define __LECTURE__
+
+typedef struct ListeCell{
+    unsigned int value;
+    struct ListeCell *suivant;
+}Liste;
+
+typedef struct{
+    Liste *p;
+    Liste *i;
+    Liste *x;
+}CSCListe;
 
 typedef struct{
     int *p;
@@ -27,11 +31,15 @@ typedef struct{
     int nbCols;
 }CSC;
 
-
-// CSC *init_matrice(int nbLignes, int nbCols, int nz, int *p, int *i, double *x );
 CSC *creer_matrice(char *fichierInput);
 
-double *matrice_vecteur(CSC *matCreuse, double *vect, int n); // n = la taille du vecteur
+Liste *creer_cellule(unsigned int value);
+
+Liste *add_at(Liste *L, int i, unsigned int value);
+
+Liste *add_last(Liste *L, unsigned int value);
+
+unsigned int taille_Liste(Liste *L);
 
 
 #endif // __LECTURE__

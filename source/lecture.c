@@ -11,23 +11,7 @@
 #include "lecture.h"
 
 
-
 // ------------------------------------------------------------------------------------------------ //
-
-// CSC *init_matrice(int nbLignes, int nbCols, int nz, int *p, int *i, double *x ){
-//     assert(p != NULL && i != NULL && x != NULL);
-//     CSC *matriceCreuse = malloc(sizeof(CSC));
-//     if (!matriceCreuse){
-//         return NULL;
-//     }
-//     matriceCreuse->nbLignes = nbLignes;
-//     matriceCreuse->nbCols = nbCols;
-//     matriceCreuse->nz = nz;
-//     matriceCreuse->p = p;
-//     matriceCreuse->i = i;
-//     matriceCreuse->x = x;
-//     return matriceCreuse;
-// }
 
 CSC *creer_matrice(char *fichierInput){
     assert(fichierInput != NULL);
@@ -114,32 +98,84 @@ CSC *creer_matrice(char *fichierInput){
     return matrice;
 }
 
+Liste *creer_cellule(unsigned int value){
+    assert(value >= 0);
 
+    Liste *cellule = malloc(sizeof(Liste));
 
-double *matrice_vecteur(CSC *matCreuse, double *vect, int n){
-    assert(matCreuse != NULL && vect != NULL);
-    if (matCreuse->nbLignes != n){
-        printf("La multiplication n'est pas définie entre la matrice et le vectuer\n");
+    if(cellule == NULL)
         return NULL;
-    }
-    // le vecteur produit on initialise tout à 0
-    double *y = calloc(n, sizeof(double));
-    if (!y){
-        printf("Echec du produit MATRICE x VECTEUR : Allocation du vecteur produit échouée\n");
-        return NULL;
-    }
-    // ----------------------------------Indexing starting at 0 ------------------------------------- //
-    // for (int i = 0; i < n; i++){
-    //     for (int j = matCreuse->p[i]; j <= matCreuse->p[i+1]-1; j++){
-    //         y[matCreuse->i[j]] += vect[i] * matCreuse->x[j]; 
-    //     }
-    // }
+    
+    cellule->value = value;
+    cellule->suivant = NULL;
 
-    // ----------------------------------Indexing starting at 1 ------------------------------------- //
-    for (int i = 0; i < n; i++){ // parcourt les colonnes du vecteur
-        for (int j = matCreuse->p[i]-1; j < matCreuse->p[i+1]-1; j++){ // parcourt la colonne i
-            y[matCreuse->i[j]-1] += vect[i] * matCreuse->x[j]; 
-        }
-    }
-    return y;
+    return cellule;
 }
+
+unsigned int taille_Liste(Liste *L){
+    int taille = 0;
+
+    Liste *p = L;
+
+    while(p != NULL){
+        taille++;
+        p = p->suivant;
+    }
+
+    return taille;
+}
+
+Liste *add_at(Liste *L, int i, unsigned int value){
+    assert(i >= 0 && i < taille_Liste(L) && value >= 0);
+
+    unsigned int j = 0;
+
+    Liste *cellule = creer_cellule(value);
+
+    if(!cellule)
+        return L;
+
+    if(i == 0){
+        cellule->suivant = L;
+
+        return cellule;
+    }
+
+    Liste *p_cour = L;
+    Liste *p_prec = NULL;
+
+    while(j < i){
+        p_prec = p_cour;
+        p_cour = p_cour->suivant;
+        j++;
+    }
+
+    cellule->suivant = p_cour;
+    p_prec->suivant = cellule;
+
+    return L;
+}
+
+Liste *add_last(Liste *L, unsigned int value){
+    assert(value >= 0);
+
+    Liste *p = L;
+
+    Liste *cellule = creer_cellule(value);
+
+    if(cellule==NULL)
+        return L;
+    
+    if(L == NULL)
+        L = cellule;
+    else{
+        while(p->suivant != NULL)
+            p = p->suivant;
+        p->suivant = cellule;
+    }
+
+    return L;
+}
+
+
+
