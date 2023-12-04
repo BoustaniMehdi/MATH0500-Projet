@@ -31,6 +31,13 @@ typedef struct{
     int nbCols;
 }CSC;
 
+typedef struct{
+    int *i;
+    double *x;
+    int nnz;
+    int taille;
+}vectCreux;
+
 CSC *creer_matrice(char *fichierInput);
 
 Liste *creer_cellule(unsigned int value);
