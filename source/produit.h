@@ -8,8 +8,7 @@
  * Crée une matrice creuse ou un vecteur creux correspondant au fichier d'input, ainsi la structure de donnée dans laquelle nous stockons ceux-ci
  */
 
-
-
-double *matrice_vecteur(CSC *matCreuse, double *vect);
+#include "matrice.h"
 
 CSC *matrice_matrice(CSC *A, CSC *B);
+double *matrice_vecteur(CSC *matCreuse, double *vect, int n);

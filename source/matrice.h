@@ -8,19 +8,8 @@
  * Crée une matrice creuse ou un vecteur creux correspondant au fichier d'input, ainsi la structure de donnée dans laquelle nous stockons ceux-ci
  */
 
-#ifndef __LECTURE__
-#define __LECTURE__
-
-typedef struct ListeCell{
-    unsigned int value;
-    struct ListeCell *suivant;
-}Liste;
-
-typedef struct{
-    Liste *p;
-    Liste *i;
-    Liste *x;
-}CSCListe;
+#ifndef __MATRICE__
+#define __MATRICE__
 
 typedef struct{
     int *p;
@@ -31,24 +20,9 @@ typedef struct{
     int nbCols;
 }CSC;
 
-typedef struct{
-    int *i;
-    double *x;
-    int nnz;
-    int taille;
-}vectCreux;
-
 CSC *creer_matrice(char *fichierInput);
 
-Liste *creer_cellule(unsigned int value);
 
-Liste *add_at(Liste *L, int i, unsigned int value);
-
-Liste *add_last(Liste *L, unsigned int value);
-
-unsigned int taille_Liste(Liste *L);
-
-
-#endif // __LECTURE__
+#endif // __MATRICE__
 
 // VOIR SLIDES CORRECTION TP POUR LE PROJET (SPECIFICATION,INVARIANT,.....)
