@@ -9,11 +9,12 @@
 #include <assert.h>
 
 #include "produit.h"
+#include "tableau.h"
 
 CSC *matrice_matrice(CSC *A, CSC *B){
     assert(A != NULL && B != NULL && A->nbCols == B->nbLignes);
 
-    int elements = 0;
+    unsigned int elements = 0, indice = 0;
 
     CSC *C = malloc(sizeof(CSC));
 
@@ -23,19 +24,20 @@ CSC *matrice_matrice(CSC *A, CSC *B){
     }
 
     //A corriger version tableau
-    C->p = NULL;
+    C->p = creer_tableau();
     C->i = NULL;
     C->x = NULL;
 
     for(unsigned int j = 0; j < B->nbCols; j++){
+        
         //On verifie si on est pas sur une colonne vide
         if(B->p[j] != B->p[j+1]){
             elements = 0;
 
             for(unsigned int k = B->p[j]; k < B->p[j+1]; k++){
                 for(unsigned int i = A->p[B->i[k]]; i < A->p[B->i[k]+1]; i++){
-                    add_last(C->p, A->i[i]); //Ca marche pour l'exemple du cours mais faut faire l'union
-                    C->x[i], A->x[i] * B->x[k]; //L'indice i du résultat est incorrecte, à corriger
+                    C->p[indice] = A->i[i]; //Ca marche pour l'exemple du cours mais faut faire l'union
+                    C->x[i] = A->x[i] * B->x[k]; //L'indice i du résultat est incorrecte, à corriger
                     elements++;
                 }
             }  

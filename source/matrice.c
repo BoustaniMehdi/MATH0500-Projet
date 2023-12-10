@@ -1,7 +1,7 @@
 /*
  * Auteur : Boustani Mehdi, Alabashityalshaier Abdelkader -- Université de Liège
  * Projet de programmation MATH0500
- * Fichier lecture.c
+ * Fichier matrice.c
  */
 
 #include <stdlib.h>
@@ -26,7 +26,7 @@ CSC *creer_matrice(char *fichierInput){
     }
 
     FILE *fptr = fopen(fichierInput, "r");
-    if (!fptr){
+    if(!fptr){
         printf("Erreur ouverture du fichier input\n");
         free(matrice);
         return NULL;
@@ -69,9 +69,9 @@ CSC *creer_matrice(char *fichierInput){
         return NULL;
     }
 
-    while (indice < matrice->nnz){
+    while(indice < matrice->nnz){
 
-        if(fscanf(fptr, "%d %d %f", &ligne, &col, &valeur) != 3){
+        if(fscanf(fptr, "%d %d %lf", &ligne, &col, &valeur) != 3){
             printf("Erreur lecture : fichier corrompu\n");
             return NULL;
         }
@@ -79,12 +79,14 @@ CSC *creer_matrice(char *fichierInput){
         matrice->x[indice] = valeur;
         matrice->i[indice] = ligne;
 
-        if (col != colCourant){
-            if (col - colCourant > 1){
+        if(col != colCourant){
+
+            if(col - colCourant > 1){
                 for (int j = 0; j < col-colCourant - 1; j++){
                     matrice->p[indiceCol++] = indice + 1;
                 }
             }
+            
             matrice->p[indiceCol++] = indice + 1;
             
             colCourant = col;
