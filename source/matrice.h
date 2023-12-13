@@ -20,6 +20,12 @@ typedef struct{
     int nbCols;
 }CSC;
 
+typedef struct{
+    int *ligne;
+    int *colonne;
+    double *valeur;
+}MatriceInput;
+
 CSC *creer_matrice(char *fichierInput);
 
 

@@ -9,6 +9,7 @@
 #include <assert.h>
 
 #include "matrice.h"
+#include "tri.h"
 
 
 // ------------------------------------------------------------------------------------------------ //
@@ -69,27 +70,101 @@ CSC *creer_matrice(char *fichierInput){
         return NULL;
     }
 
-    while(indice < matrice->nnz){
+    MatriceInput* entries = malloc(matrice->nnz * sizeof(MatriceInput));
 
+    if(!entries){
+        printf("Erreur creation de stockage de la matrice\n");
+        free(matrice->x);
+        free(matrice->i);
+        free(matrice->p);
+        free(matrice);
+        fclose(fptr);
+        return NULL;
+    }
+
+    entries->ligne = malloc(matrice->nnz * sizeof(int));
+    if(!entries->ligne){
+        printf("Erreur creation de stockage du tableau ligne\n");
+        free(entries);
+        free(matrice->x);
+        free(matrice->i);
+        free(matrice->p);
+        free(matrice);
+        fclose(fptr);
+        return NULL;
+    }
+
+    entries->colonne = malloc(matrice->nnz * sizeof(int));
+    if(!entries->colonne){
+        printf("Erreur creation de stockage du tableau colonne\n");
+        free(entries->ligne);
+        free(entries);
+        free(matrice->x);
+        free(matrice->i);
+        free(matrice->p);
+        free(matrice);
+        fclose(fptr);
+        return NULL;
+    }
+
+    entries->valeur = malloc(matrice->nnz * sizeof(double));
+    if(!entries->valeur){
+        printf("Erreur creation de stockage du tableau valeur\n");
+        free(entries->colonne);
+        free(entries->ligne);
+        free(entries);
+        free(matrice->x);
+        free(matrice->i);
+        free(matrice->p);
+        free(matrice);
+        fclose(fptr);
+        return NULL;
+    }
+
+    while(indice < matrice->nnz){
         if(fscanf(fptr, "%d %d %lf", &ligne, &col, &valeur) != 3){
             printf("Erreur lecture : fichier corrompu\n");
             return NULL;
         }
 
-        matrice->x[indice] = valeur;
-        matrice->i[indice] = ligne;
+        entries->ligne[indice] = ligne;
+        entries->colonne[indice] = col;
+        entries->valeur[indice] = valeur;
 
-        if(col != colCourant){
+        indice++;
 
-            if(col - colCourant > 1){
-                for (int j = 0; j < col-colCourant - 1; j++){
+    }
+
+    //for (int i = 0; i < 15; i++)
+    //{
+        //printf("%d %d %lf\n", entries->ligne[i], entries->colonne[i], entries->valeur[i]);
+    //}
+    
+    //printf("\n");
+    
+
+    quickSortIterativeMatrice(entries->ligne,entries->colonne, entries->valeur, 0, matrice->nnz - 1);
+
+
+    indice = 0;
+
+    while(indice < matrice->nnz){
+
+        matrice->x[indice] = entries->valeur[indice];
+        matrice->i[indice] = entries->ligne[indice];
+
+        if(entries->colonne[indice] != colCourant){
+
+            if(entries->colonne[indice] - colCourant > 1){
+                for (int j = 0; j < entries->colonne[indice]-colCourant - 1; j++){
+                    
                     matrice->p[indiceCol++] = indice + 1;
                 }
             }
             
             matrice->p[indiceCol++] = indice + 1;
             
-            colCourant = col;
+            colCourant = entries->colonne[indice];
         }
 
         indice ++;
@@ -98,6 +173,11 @@ CSC *creer_matrice(char *fichierInput){
     matrice->p[indiceCol] = indice + 1;
 
     fclose(fptr);   
+
+    free(entries->ligne);
+    free(entries->colonne);
+    free(entries->valeur);
+    free(entries);
 
     return matrice;
 }
