@@ -11,6 +11,8 @@
 #ifndef __MATRICE__
 #define __MATRICE__
 
+#define DEBUT 1
+
 typedef struct{
     int *p;
     int *i;
@@ -27,7 +29,8 @@ typedef struct{
 }MatriceInput;
 
 CSC *creer_matrice(char *fichierInput);
-
+void detruire_matrice(CSC *mat);
+unsigned short CSC_vers_fichier(CSC *matCreuse, char *filename);
 
 #endif // __MATRICE__
 

@@ -12,7 +12,33 @@
 #include "tri.h"
 
 
-// ------------------------------------------------------------------------------------------------ //
+// ---------------------------------------------------- ABDEL ------------------------------------------------------- //
+unsigned short CSC_vers_fichier(CSC *matCreuse, char *filename){
+    assert(matCreuse != NULL && filename != NULL);
+    FILE *fw = fopen(filename, "w");
+    if (!fw){
+        printf("Erreur ouverture du fichier : %s\n", filename);
+        return 0;
+    }
+    fprintf(fw, "%d %d %d\n", matCreuse->nbLignes, matCreuse->nbCols, matCreuse->nnz);
+    for (int i = 0; i <= matCreuse->nbCols-1; i++){
+        for(int j = matCreuse->p[i]; j <= matCreuse->p[i+1] - 1; j++){
+            fprintf(fw, "%d %d %lf\n", matCreuse->i[j-DEBUT], i+DEBUT, matCreuse->x[j-DEBUT]);
+        }
+    }
+    fclose(fw);
+    return 1;
+}
+
+void detruire_matrice(CSC *mat){
+    assert(mat != NULL);
+    free(mat->i);
+    free(mat->x);
+    free(mat->p);
+    free(mat);
+}
+
+// -------------------------------------------------------------------------------------------------------------------- //
 
 CSC *creer_matrice(char *fichierInput){
     assert(fichierInput != NULL);
@@ -181,6 +207,4 @@ CSC *creer_matrice(char *fichierInput){
 
     return matrice;
 }
-
-
 

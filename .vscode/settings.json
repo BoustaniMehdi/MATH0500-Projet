@@ -59,6 +59,8 @@
   "files.associations": {
     "stdlib.h": "c",
     "valeur_propre.h": "c",
-    "vecteur.h": "c"
+    "vecteur.h": "c",
+    "tri.h": "c",
+    "tableau.h": "c"
   }
 }
