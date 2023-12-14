@@ -1,29 +1,29 @@
 # Tools & flags
 CC=gcc
 CFLAGS=--std=c99 --pedantic -Wall -W -Wmissing-prototypes
+LD=gcc
+LDFLAGS=
 
 # Files
-EXEC=main
-OBJECTS=main.o lecture.o produit.o valeur_propre.o
+PRODUIT_EXEC=produit
+PUISSANCE_EXEC=puissance
+PRODUIT_OBJECTS=source/matrice.o source/produit.o source/tri.o source/vecteur.o
+PUISSANCE_OBJECTS=source/matrice.o source/valeur_propre.o source/vecteur.o
 
 ## Rules
 
-all: $(EXEC)
+all: $(PRODUIT_EXEC) $(PUISSANCE_EXEC)
 
-main: $(OBJECTS)
-	$(CC) -o $(EXEC) $(OBJECTS) $(CFLAGS)
+$(PRODUIT_EXEC): $(PRODUIT_OBJECTS)
+	$(CC) -o $(PRODUIT_EXEC) $(PRODUIT_OBJECTS) $(CFLAGS)
 
-main.o: source/main.c source/lecture.h source/produit.h source/valeur_propre.h
-	$(CC) -c $< $(CFLAGS)
+$(PUISSANCE_EXEC): $(PUISSANCE_OBJECTS)
+	$(CC) -o $(PUISSANCE_EXEC) $(PUISSANCE_OBJECTS) $(CFLAGS)
 
-lecture.o: source/lecture.c source/lecture.h
-	$(CC) -c $< $(CFLAGS) 
-
-produit.o: source/produit.c source/produit.h
-	$(CC) -c $< $(CFLAGS) 
-
-valeur_propre.o: source/valeur_propre.c source/valeur_propre.h
-	$(CC) -c $< $(CFLAGS) 
+source/%.o: source/%.c source/%.h
+	$(CC) -c $< -o $@ $(CFLAGS)
 
 clean:
-	rm -f *.o main
+	rm -f $(PRODUIT_OBJECTS) $(PUISSANCE_OBJECTS) $(PRODUIT_EXEC) $(PUISSANCE_EXEC) *~
+
+.PHONY: all clean
