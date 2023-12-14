@@ -32,22 +32,27 @@ unsigned int get_nz(int *uni, int size, int *dest, int start){
 }
 
 CSC *produit_matrice_matrice(CSC *A, CSC *B){
-    assert(A != NULL && B != NULL);
+    assert(A != NULL && A->p != NULL && A->i != NULL && A->x != NULL && 
+           B != NULL && B->p != NULL && B->i != NULL && B->x != NULL);
+
     if (A->nbCols != B->nbLignes){
         printf("Erreur : Le produit AxB n'est pas definie\n");
         return NULL;
     }
+
     CSC *C = malloc(sizeof(CSC));
     if (!C){
         printf("Erreur : Echec d'allocation de la matrice C\n");
         return NULL;
     }    
+
     C->p = malloc((B->nbCols +1) * sizeof(int));
     if (!C->p){
         printf("Erreur : Echec d'allocation de C.p\n");
         free(C);
         return NULL;
     }
+
     C->p[0] = DEBUT;
     C->nbLignes = A->nbLignes;
     C->nbCols = B->nbCols;
@@ -93,6 +98,7 @@ CSC *produit_matrice_matrice(CSC *A, CSC *B){
     unsigned int idx = 0; // indice pour remplir le tableau temporaire y (pour les non-zeros)
     unsigned int count = 0; // indice pour remplir l'union
     unsigned int nonZeros = 0; // comptage des non-zeros
+    
     for (int j = 0; j < B->nbCols; j++){ // parcourir les colonnes de B
         count = 0;
         for (int k = B->p[j] - DEBUT; k <= B->p[j+1] - 1 - DEBUT; k++){ // identifier les non-zeros de B
@@ -154,43 +160,6 @@ CSC *produit_matrice_matrice(CSC *A, CSC *B){
 }
 
 // ----------------------------------------------------------------------------------------------------------------- //
-
-CSC *matrice_matrice(CSC *A, CSC *B){
-    assert(A != NULL && B != NULL && A->nbCols == B->nbLignes);
-
-    unsigned int elements = 0, indice = 0;
-
-    CSC *C = malloc(sizeof(CSC));
-
-    if(!C){
-        printf("Erreur creation de la matrice\n");
-        return NULL;
-    }
-
-    //A corriger version tableau
-    C->p = creer_tableau();
-    C->i = NULL;
-    C->x = NULL;
-
-    for(unsigned int j = 0; j < B->nbCols; j++){
-        
-        //On verifie si on est pas sur une colonne vide
-        if(B->p[j] != B->p[j+1]){
-            elements = 0;
-
-            for(unsigned int k = B->p[j]; k < B->p[j+1]; k++){
-                for(unsigned int i = A->p[B->i[k]]; i < A->p[B->i[k]+1]; i++){
-                    C->p[indice] = A->i[i]; //Ca marche pour l'exemple du cours mais faut faire l'union
-                    C->x[i] = A->x[i] * B->x[k]; //L'indice i du résultat est incorrecte, à corriger
-                    elements++;
-                }
-            }  
-
-        }
-
-        C->p[j] = elements;
-    }
-}
 
 double *matrice_vecteur(CSC *matCreuse, double *vect, int n){
     assert(matCreuse != NULL && matCreuse->i != NULL && matCreuse->p != NULL && vect != NULL && matCreuse->nbLignes == n);

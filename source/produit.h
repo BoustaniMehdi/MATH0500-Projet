@@ -12,5 +12,4 @@
 
 unsigned int get_nz(int *uni, int size, int *dest, int start);
 CSC *produit_matrice_matrice(CSC *A, CSC *B);
-CSC *matrice_matrice(CSC *A, CSC *B);
 double *matrice_vecteur(CSC *matCreuse, double *vect, int n);

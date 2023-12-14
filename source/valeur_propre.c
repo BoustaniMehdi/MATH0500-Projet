@@ -92,11 +92,13 @@ vectCreux *creer_vecteur_creux(double *vectTableau, unsigned int n){
     }
     
     vect->taille = n;
+    
     for (int i = 0; i < n; i++){
         if (vectTableau[i] != 0){
             nonZeros += 1;
         }
     }
+
     vect->nnz = nonZeros;
     vect->i = malloc(nonZeros * sizeof(int));
 
