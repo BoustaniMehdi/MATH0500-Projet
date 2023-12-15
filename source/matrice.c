@@ -21,9 +21,12 @@ unsigned short CSC_vers_fichier(CSC *matCreuse, char *filename){
         return 0;
     }
     fprintf(fw, "%d %d %d\n", matCreuse->nbLignes, matCreuse->nbCols, matCreuse->nnz);
-    for (int i = 0; i <= matCreuse->nbCols-1; i++){
+    
+    unsigned int nz = 0;
+    for (int i = 0; i <= matCreuse->nbCols-1 && nz < matCreuse->nnz ;i++){
         for(int j = matCreuse->p[i]; j <= matCreuse->p[i+1] - 1; j++){
-            fprintf(fw, "%d %d %lf\n", matCreuse->i[j-DEBUT], i+DEBUT, matCreuse->x[j-DEBUT]);
+            fprintf(fw, "%d %d %lf\n", matCreuse->i[j-DEBUT], i+DEBUT, matCreuse->x[j-DEBUT]);           
+            nz += 1; 
         }
     }
     fclose(fw);
