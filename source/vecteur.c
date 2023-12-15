@@ -11,6 +11,77 @@
 
 #include "vecteur.h"
 
+// ---------------------------------------- CHANGEMENTS ------------------------------------------------------ //
+double *generer_vecteur(int n){
+    double *vect = malloc(n * sizeof(double));
+    if (!vect){
+        printf("Erreur : Echec allocation -- Echec generation du vecteur\n");
+        return NULL;
+    }
+    srand(time(NULL)); // seed
+    for (int i = 0; i < n; i++){
+            vect[i] = rand() ; 
+    
+    }
+    return vect;
+}
+
+// Changement : prendre la valeur reelle et non la valeur absolue
+double norme(double *vect, int n){ // norme 0 = nnz
+    assert(vect != NULL);
+    double max = fabs(vect[0]); 
+    for (int i = 1; i < n; i++){
+        if (fabs(vect[i]) > fabs(max)){ // CHANGEMENT ICI : ON COMPARE LA VALEUR ABSOLUE MAIS ON PREND LA VALEUR REELLE
+            max = (vect[i]);
+        }
+    }
+    return max;
+}
+
+// Changement : Enlever les nombres TRES proche de 0 (à une TOLVECT pres)
+vectCreux *creer_vecteur_creux(double *vectTableau, int n){
+    assert(vectTableau != NULL);
+    vectCreux *vect = malloc(sizeof(vectCreux));
+    if (!vect){
+        printf("Erreur : Echec creation du vecteur creux\n");
+        return NULL;
+    }
+    unsigned int nonZeros = 0;
+    // size_t n = sizeof(vectTableau);
+    vect->taille = n;
+    for (int i = 0; i < n; i++){
+        if ( fabs(vectTableau[i]) > TOLVECT && vectTableau[i] != 0 ){
+            nonZeros += 1;
+        }
+    }
+    vect->nnz = nonZeros;
+    vect->i = malloc(nonZeros * sizeof(int));
+    if (!vect->i){
+        free(vect);
+        printf("Erreur : Echec allocation vecteur creux\n");
+        return NULL;
+    }
+    vect->x = malloc(nonZeros * sizeof(double));
+    if (!vect->x){
+        free(vect->i);
+        free(vect);
+        printf("Erreur : Echec allocation vecteur creux\n");
+        return NULL;
+    }
+    unsigned int indice = 0;
+    for (int j = 0; j < n; j++){
+        if(fabs(vectTableau[j]) > TOLVECT && vectTableau[j] != 0){
+            vect->x[indice] = vectTableau[j];
+            vect->i[indice] = j;
+            indice++;
+        }
+    }
+    return vect;
+}
+
+
+// ------------------------------------------------------------------------------------------- //
+
 
 double *generer_vecteur(int n){
     assert(n > 0);

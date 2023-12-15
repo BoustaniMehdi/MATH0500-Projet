@@ -7,6 +7,9 @@
 #ifndef __VECTEUR__
 #define __VECTEUR__
 
+#define TOLVECT 1e-10
+
+
 typedef struct{
     int *i;
     double *x;

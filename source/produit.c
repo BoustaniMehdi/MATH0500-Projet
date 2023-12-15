@@ -13,8 +13,23 @@
 #include "tri.h"
 
 
-// -------------------------------------------- NOUVEAU PRODUIT ------------------------------------------------------ // 
+// -------------------------------------------- CHANGEMENTS ------------------------------------------------------ //
+ 
+// Changement : ne pas devoir calloc à chaque itération pour le produit et réinitialiser tout à 0
+void mult_mat_vect(CSC *matCreuse, double *vect, int n, double *res){
+    assert(matCreuse != NULL && vect != NULL && matCreuse->nbLignes == n);
+    for (int i = 0; i < n; i++){
+        res[i] = 0;
+    }
+    for (int i = 0; i < n; i++){
+        for (int j = matCreuse->p[i]-1; j < matCreuse->p[i+1]-1; j++){
+            res[matCreuse->i[j]-1] += vect[i] * matCreuse->x[j]; 
+        }
+    }
+    // return y;
+}
 
+// Changment : Ne pas prendre en compte les zeros du produit
 CSC *produit_matrice_matrice(CSC *A, CSC *B){
     assert(A != NULL && B != NULL);
     if (A->nbCols != B->nbLignes){
@@ -78,7 +93,7 @@ CSC *produit_matrice_matrice(CSC *A, CSC *B){
     unsigned int count = 0; // indice pour remplir l'union
     unsigned int nonZeros = 0; // comptage des non-zeros
     unsigned int resZeros = 0; // compte le nombre de zeros resultant du produit
-    unsigned int tmpcount = 0;
+    unsigned int tmpcount = 0; // compte le nombre de zeros resultant du produit pour chaque colonne
     for (int j = 0; j < B->nbCols; j++){ // parcourir les colonnes de B
         count = 0;
         for (int k = B->p[j] - DEBUT; k <= B->p[j+1] - 1 - DEBUT; k++){ // identifier les non-zeros de B
