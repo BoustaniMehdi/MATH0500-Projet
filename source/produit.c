@@ -115,7 +115,7 @@ CSC *produit_matrice_matrice(CSC *A, CSC *B){
         // Nombre des elements non-nuls dans l'union (sans rep)
         nonZeros = get_nz(uni, count, tmpI, C->nnz);
         // Remplir un tableau y temporaire pour les non-nuls
-        for (int l = 0; l < nonZeros; l++){
+        for (unsigned int l = 0; l < nonZeros; l++){
             unsigned int ligne = tmpI[l+C->nnz] - DEBUT; // ACCEDER LES ELEMENTS POUR EVITER DE TOUT PARCOURIR
                 y[idx] = tmpx[ligne];
                 idx += 1;
@@ -161,7 +161,7 @@ CSC *produit_matrice_matrice(CSC *A, CSC *B){
 
 // ----------------------------------------------------------------------------------------------------------------- //
 
-double *matrice_vecteur(CSC *matCreuse, double *vect, int n){
+double *produit_matrice_vecteur(CSC *matCreuse, double *vect, int n){
     assert(matCreuse != NULL && matCreuse->i != NULL && matCreuse->p != NULL && vect != NULL && matCreuse->nbLignes == n);
 
     // le vecteur produit on initialise tout à 0

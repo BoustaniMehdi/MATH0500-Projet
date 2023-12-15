@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <time.h>
+
+#include "vecteur.h"
 
 
 double *generer_vecteur(int n){

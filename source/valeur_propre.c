@@ -4,6 +4,8 @@
 #include <math.h>
 
 #include "valeur_propre.h"
+#include "produit.h"
+#include "tri.h"
 
 // RENVOIE LA NORME INFINIE D'UN VECTEUR (max component)
 double norme(double *vect, int n){ 
@@ -45,7 +47,7 @@ double *get_vect_propre(CSC *A, double *valPropre){
     if (!x){
         return NULL;
     }
-    double *w = matrice_vecteur(A, x, n); // w = Ax
+    double *w = produit_matrice_vecteur(A, x, n); // w = Ax
 
     *valPropre = norme(w, n);
 
@@ -64,9 +66,9 @@ double *get_vect_propre(CSC *A, double *valPropre){
 
         free(z);
 
-        w = mult_mat_vect(A, x, n);
+        w = produit_matrice_vecteur(A, x, n);
 
-        // w = mult_mat_vect(A, z, n);
+        // w = produit_matrice_vecteur(A, z, n);
         *valPropre = norme(w, n);
 
         z = diviser_vect_scalaire(w, n, *valPropre);
@@ -93,7 +95,7 @@ vectCreux *creer_vecteur_creux(double *vectTableau, unsigned int n){
     
     vect->taille = n;
     
-    for (int i = 0; i < n; i++){
+    for (unsigned int i = 0; i < n; i++){
         if (vectTableau[i] != 0){
             nonZeros += 1;
         }
@@ -116,7 +118,7 @@ vectCreux *creer_vecteur_creux(double *vectTableau, unsigned int n){
         return NULL;
     }
 
-    for (int j = 0; j < n; j++){
+    for (unsigned int j = 0; j < n; j++){
         if(vectTableau[j] != 0){
             vect->x[indice] = vectTableau[j];
             vect->i[indice] = j;

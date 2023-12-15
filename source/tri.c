@@ -5,9 +5,11 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 
 #include "matrice.h"
+#include "tri.h"
 
 
 // ----------------------------------------------------------- ABDEL ------------------------------------------------------------------ //

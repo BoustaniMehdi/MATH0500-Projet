@@ -8,17 +8,18 @@ LDFLAGS=
 PRODUIT_EXEC=produit
 PUISSANCE_EXEC=puissance
 PRODUIT_OBJECTS=source/matrice.o source/produit.o source/tri.o source/vecteur.o
-PUISSANCE_OBJECTS=source/matrice.o source/valeur_propre.o source/vecteur.o
+PUISSANCE_OBJECTS=source/matrice.o source/valeur_propre.o source/produit.o source/tri.o source/vecteur.o
+MAIN_FILE=source/main.c
 
 ## Rules
 
 all: $(PRODUIT_EXEC) $(PUISSANCE_EXEC)
 
 $(PRODUIT_EXEC): $(PRODUIT_OBJECTS)
-	$(CC) -o $(PRODUIT_EXEC) $(PRODUIT_OBJECTS) $(CFLAGS)
+	$(CC) -o $(PRODUIT_EXEC) $(PRODUIT_OBJECTS) $(MAIN_FILE) $(CFLAGS)
 
 $(PUISSANCE_EXEC): $(PUISSANCE_OBJECTS)
-	$(CC) -o $(PUISSANCE_EXEC) $(PUISSANCE_OBJECTS) $(CFLAGS)
+	$(CC) -o $(PUISSANCE_EXEC) $(PUISSANCE_OBJECTS) $(MAIN_FILE) $(CFLAGS)
 
 source/%.o: source/%.c source/%.h
 	$(CC) -c $< -o $@ $(CFLAGS)
