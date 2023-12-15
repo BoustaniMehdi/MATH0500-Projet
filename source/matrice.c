@@ -15,11 +15,13 @@
 // ---------------------------------------------------- ABDEL ------------------------------------------------------- //
 unsigned short CSC_vers_fichier(CSC *matCreuse, char *filename){
     assert(matCreuse != NULL && filename != NULL);
+
     FILE *fw = fopen(filename, "w");
     if (!fw){
         printf("Erreur ouverture du fichier : %s\n", filename);
         return 0;
     }
+
     fprintf(fw, "%d %d %d\n", matCreuse->nbLignes, matCreuse->nbCols, matCreuse->nnz);
     
     unsigned int nz = 0;
@@ -29,12 +31,15 @@ unsigned short CSC_vers_fichier(CSC *matCreuse, char *filename){
             nz += 1; 
         }
     }
+
     fclose(fw);
+    
     return 1;
 }
 
 void detruire_matrice(CSC *mat){
     assert(mat != NULL);
+
     free(mat->i);
     free(mat->x);
     free(mat->p);
@@ -163,15 +168,7 @@ CSC *creer_matrice(char *fichierInput){
         indice++;
 
     }
-
-    //for (int i = 0; i < 15; i++)
-    //{
-        //printf("%d %d %lf\n", entries->ligne[i], entries->colonne[i], entries->valeur[i]);
-    //}
     
-    //printf("\n");
-    
-
     quickSortIterativeMatrice(entries->ligne,entries->colonne, entries->valeur, 0, matrice->nnz - 1);
 
 
