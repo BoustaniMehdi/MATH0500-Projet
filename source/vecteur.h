@@ -16,6 +16,14 @@ typedef struct{
 
 double *generer_vecteur(int n);
 
+// RENVOIE LA NORME INFINIE D'UN VECTEUR (max component)
+double norme(double *vect, int n);
+
 void copier_vecteur(double *source, double *dest, int n);
+
+double *diviser_vect_scalaire(double *vect, int n, double scalaire);
+
+vectCreux *creer_vecteur_creux(double *vectTableau, unsigned int n);
+
 
 #endif //__VECTEUR__
