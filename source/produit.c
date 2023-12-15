@@ -99,12 +99,15 @@ CSC *produit_matrice_matrice(CSC *A, CSC *B){
         for (int l = 0; l < nonZeros; l++){
             unsigned int ligne = tmpI[l+C->nnz] - DEBUT; // ACCEDER LES ELEMENTS POUR EVITER DE TOUT PARCOURIR
             if (tmpx[ligne] == 0){
+                // printf("%d\n", resZeros);
                 resZeros += 1;
                 tmpcount += 1;
                 tmpI[l+C->nnz] = 0; 
                 y[idx] = 0;
             }
             else {
+                // printf("%d\n", idx);
+                // printf("%lf\n", tmpx[ligne]);
                 y[idx] = tmpx[ligne];
                 idx += 1;    
             }
@@ -130,7 +133,16 @@ CSC *produit_matrice_matrice(CSC *A, CSC *B){
         free(C);
         return NULL;
     }
-    
+    idx = 0;
+    for(int j = 0; j < A->nnz + B->nnz; j++){
+        if (tmpI[j] != 0){
+            C->i[idx] = tmpI[j];
+            idx += 1;
+        }
+    }
+    printf("idx = %d\n", idx);
+    free(tmpI);
+
     C->x = malloc(C->nnz * sizeof(double));
     if(!C->x){
         printf("Erreur : Echec d'allocation de C.i \n");
@@ -143,19 +155,17 @@ CSC *produit_matrice_matrice(CSC *A, CSC *B){
     }
     // REMPLIR C.i et C.x
     idx = 0;
-    for (int j = 0; j < nonZeros; j++){
-        if (tmpI[j] != 0 && y[j] != 0){
-            C->x[idx] = y[j];
-            C->i[idx] = tmpI[j];
+    for (int i = 0; i < nonZeros; i++){
+        if (y[i] != 0){
+            C->x[idx] = y[i];
             idx += 1;
         }
     }
+    printf("idx = %d\n", idx);
 
     free(y);
-    free(tmpI);
     return C;
 }
-
 // --------------------------------------------------------------------------------------------------------------------// 
 
 
