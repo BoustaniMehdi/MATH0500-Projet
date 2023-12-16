@@ -12,12 +12,11 @@
 
 #define MAX_ITER 10000
 #define TOLERANCE 1e-4
-#define TOLVECT 1e-10 // un nombre est très proche de 0 
 
 
-unsigned short vect_egaux(double *vect1, double *vect2, int n);
+unsigned short are_equal(double *vect1, double *vect2, int n);
 
-double *get_vect_propre(CSC *A, double *valPropre);
+double *get_eigen_vector(CSC *A, double *eigenValue);
 
 
 

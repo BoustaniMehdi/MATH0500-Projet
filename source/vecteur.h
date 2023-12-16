@@ -14,18 +14,21 @@ typedef struct{
     int *i;
     double *x;
     int nnz;
-    int taille;
-}vectCreux;
+    int size;
+}sparseVector;
 
-double *generer_vecteur(int n);
 
-double norme_infinie(double *vect, int n);
+sparseVector *create_sparse_vector(double *vector, unsigned int n);
+unsigned short vector_to_file(sparseVector *vect, char *filename);
+void destroy_vector(sparseVector *vect);
 
-void copier_vecteur(double *source, double *dest, int n);
+double *generate_vector(int n);
+void copy_vector(double *source, double *dest, int n);
+double *divide_vect_scalar(double *vect, int n, double scalar);
 
-double *diviser_vect_scalaire(double *vect, int n, double scalaire);
+// RENVOIE LA NORME INFINIE D'UN VECTEUR (max component)
+double get_largest_module(double *vect, int n);
 
-vectCreux *creer_vecteur_creux(double *vectTableau, unsigned int n);
 
 
 #endif //__VECTEUR__

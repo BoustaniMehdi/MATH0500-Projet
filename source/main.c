@@ -21,16 +21,71 @@ int main(int argc, char *argv[]){
     }
 
     if(strcmp(argv[0], "./produit") == 0){
-        CSC *A = creer_matrice("matrices/cont11.A.mtx");
-        CSC *B = creer_matrice("matrices/cont11.B.mtx");
+        // MATRICE A 
+        CSC *A = create_matrix("Matrices/brand.A.mtx");
+        if (!A){
+            printf("Failed to create A \n");
+            return 1;
+        }
 
-        CSC *C = produit_matrice_matrice(A, B);
+        // MATRICE B
+        CSC *B = create_matrix("Matrices/brand.B.mtx");
+        if (!B){
+            printf("Failed to create B\n");
+            destroy_matrix(A);
+            return 1;
+        }
 
-        CSC_vers_fichier(C, "produit.mtx");
+        // Produit A x B
+        CSC *C = matrix_matrix_product(A, B);
+        if (!C){
+            printf("Product A x B failed\n");
+            destroy_matrix(A);
+            destroy_matrix(B);
+            return 1;
+        }
+
+        // Ecriture de C dans un fichier
+        csc_to_file(C, "brand.C.mtx");
+
+        destroy_matrix(A);
+        destroy_matrix(B);
+        destroy_matrix(C);
     }
 
     else if (strcmp(argv[0], "./puissance") == 0){
-        printf("puissance\n");
+        // MATRICE A
+        CSC *A = create_matrix("Matrices/brand.A.mtx");
+        if (!A){
+            printf("Failed to create matrix\n");
+            return 1;
+        }
+        // Methode de la puissance
+        unsigned int n = A->nbCols;
+        double eigenValue = 0;
+        double *eigenVector = get_eigen_vector(A, &eigenValue);
+        if (!eigenVector){
+            printf("Failed to get the dominant eigenvalue\n");
+            destroy_matrix(A);
+            return 1;
+        }
+        printf("Dominant eigenvalue : %lf\n", eigenValue);
+
+        // Transformer le vecteur en vecteur creux
+        sparseVector *sparseEigenVector = create_sparse_vector(eigenVector, n);
+        if (!sparseEigenVector){
+            printf("Failed to create sparse eigenvector\n");
+            destroy_matrix(A);
+            free(eigenVector);
+            return 1;
+        }
+
+        // Ecrire le vecteur creux dans un fichier
+        vector_to_file(sparseEigenVector, "brandeigen.A.mtx");
+
+        free(eigenVector);
+        destroy_vector(sparseEigenVector);
+        destroy_matrix(A);
     }
 
     else{

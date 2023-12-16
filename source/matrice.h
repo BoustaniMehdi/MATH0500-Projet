@@ -11,26 +11,26 @@
 #ifndef __MATRICE__
 #define __MATRICE__
 
-#define DEBUT 1
+#define START 1
 
 typedef struct{
     int *p;
     int *i;
     double *x;
     int nnz;
-    int nbLignes;
+    int nbRows;
     int nbCols;
 }CSC;
 
 typedef struct{
-    int *ligne;
-    int *colonne;
-    double *valeur;
-}MatriceInput;
+    int *rows;
+    int *cols;
+    double *values;
+}MatrixInput;
 
-CSC *creer_matrice(char *fichierInput);
-void detruire_matrice(CSC *mat);
-unsigned short CSC_vers_fichier(CSC *matCreuse, char *filename);
+CSC *create_matrix(char *inputfile);
+void destroy_matrix(CSC *matrix);
+unsigned short csc_to_file(CSC *matrix, char *filename);
 
 #endif // __MATRICE__
 

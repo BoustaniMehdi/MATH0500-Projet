@@ -7,16 +7,15 @@
 #ifndef __TRI__
 #define __TRI__
 
+
+// quicksort pour un seul tableau
 void swap(int* a, int* b);
-
 int partition(int arr[], int l, int h);
-
 void quickSortIterative(int arr[], int l, int h);
 
-void swapDouble(double* a, double* b);
+// ------------------------------------ MERGE SORT ----------------------------------- //
+void mergeSort(int lignes[], int cols[], double nnz[], int n);
+void merge(int lignes[], int cols[], double nnz[], int l, int m, int r);
 
-int partitionMatrice(int col[], int row[], double values[], int l, int h);
-
-void quickSortIterativeMatrice(int row[], int col[], double values[], int l, int h);
 
 #endif

@@ -10,6 +10,5 @@
 
 #include "matrice.h"
 
-unsigned int get_nz(int *uni, int size, int *dest, int start);
-CSC *produit_matrice_matrice(CSC *A, CSC *B);
-void produit_matrice_vecteur(CSC *matCreuse, double *vect, int n, double *res);
+CSC *matrix_matrix_product(CSC *A, CSC *B);
+void matrix_vector_product(CSC *matrix, double *vect, int n, double *result);
