@@ -8,10 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "matrice.h"
 #include "produit.h"
-#include "vecteur.h"
-#include "valeur_propre.h"
 
 int main(int argc, char *argv[]){
 
@@ -22,14 +19,14 @@ int main(int argc, char *argv[]){
 
     if(strcmp(argv[0], "./produit") == 0){
         // MATRICE A 
-        CSC *A = create_matrix("Matrices/brand.A.mtx");
+        CSC *A = create_sparse_matrix("cont1.A.mtx");
         if (!A){
             printf("Failed to create A \n");
             return 1;
         }
 
         // MATRICE B
-        CSC *B = create_matrix("Matrices/brand.B.mtx");
+        CSC *B = create_sparse_matrix("cont1.A.mtx");
         if (!B){
             printf("Failed to create B\n");
             destroy_matrix(A);
@@ -54,8 +51,9 @@ int main(int argc, char *argv[]){
     }
 
     else if (strcmp(argv[0], "./puissance") == 0){
+        printf("cc");
         // MATRICE A
-        CSC *A = create_matrix("Matrices/brand.A.mtx");
+        CSC *A = create_sparse_matrix("Matrices/brand.A.mtx");
         if (!A){
             printf("Failed to create matrix\n");
             return 1;
@@ -65,16 +63,16 @@ int main(int argc, char *argv[]){
         double eigenValue = 0;
         double *eigenVector = get_eigen_vector(A, &eigenValue);
         if (!eigenVector){
-            printf("Failed to get the dominant eigenvalue\n");
+            printf("Failed to get the dominant eigen value\n");
             destroy_matrix(A);
             return 1;
         }
-        printf("Dominant eigenvalue : %lf\n", eigenValue);
+        printf("Dominant eigen value : %lf\n", eigenValue);
 
         // Transformer le vecteur en vecteur creux
-        sparseVector *sparseEigenVector = create_sparse_vector(eigenVector, n);
+        SparseVector *sparseEigenVector = create_sparse_vector(eigenVector, n);
         if (!sparseEigenVector){
-            printf("Failed to create sparse eigenvector\n");
+            printf("Failed to create sparse eigen vector\n");
             destroy_matrix(A);
             free(eigenVector);
             return 1;

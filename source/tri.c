@@ -96,6 +96,7 @@ static int min(int x, int y) {
 /* Iterative mergesort function to sort arr[0...n-1] */
 void mergeSort(int lignes[], int cols[], double nnz[], int n){
     assert(lignes != NULL && cols != NULL && nnz != NULL);
+
     int curr_size; // For current size of subarrays to be merged
                     // curr_size varies from 1 to n/2
     int left_start; // For picking starting index of left subarray
@@ -124,6 +125,7 @@ void mergeSort(int lignes[], int cols[], double nnz[], int n){
 /* Function to merge the two haves cols[l..m] and cols[m+1..r] of array cols[] */
 void merge(int lignes[], int cols[], double nnz[], int l, int m, int r){
     assert(lignes != NULL && cols != NULL && nnz != NULL);
+    
 	int i, j, k;
 	int n1 = m - l + 1;
 	int n2 = r - m;
