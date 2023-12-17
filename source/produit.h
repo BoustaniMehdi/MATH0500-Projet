@@ -8,7 +8,7 @@
  * Crée une matrice creuse correspondant au fichier d'input, ainsi la structure de donnée dans laquelle nous stockons ceux-ci
  */
 
-#define ALLOCATIONFACTOR 3
+#define ALLOCATIONFACTOR 2
 
 #include "valeur_propre.h"
 

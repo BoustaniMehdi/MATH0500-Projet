@@ -125,7 +125,7 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
         }
 
         // Verifier si nous avons pas dépassé la taille du tableau
-        if (C->nnz + nonZeros > tmpiSize){
+        if (C->nnz + count > tmpiSize){
             tmpiSize *= ALLOCATIONFACTOR;
             tmpI = realloc(tmpI, tmpiSize * sizeof(int));
             if (!tmpI){
@@ -184,6 +184,7 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
     C->nnz -= resZeros;
 
     index = 0;
+    
     // REMPLIR C.i
     C->i = malloc(C->nnz * sizeof(int));
     if(!C->i){
@@ -212,6 +213,7 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
         free(C);
         return NULL;
     }
+
     index = 0;
     for (int i = 0; i < C->nnz; i++){
         if (y[i] != 0){
