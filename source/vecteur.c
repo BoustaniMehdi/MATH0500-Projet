@@ -51,7 +51,7 @@ SparseVector *create_sparse_vector(double *vector, unsigned int n){
     
     for (unsigned int j = 0; j < n; j++){
 
-        if(fabs(vector[j]) > TOLVECT && vector[j] != 0){
+        if(vector[j] != 0){
             vect->x[index] = vector[j];
             vect->i[index] = j;
             index++;

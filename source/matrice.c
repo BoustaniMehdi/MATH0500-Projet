@@ -194,10 +194,7 @@ CSC *create_sparse_matrix(char *inputfile){
 }
 
 unsigned short csc_to_file(CSC *matrix, char *filename){
-    assert(matrix != NULL && matrix->p != NULL && matrix->i != NULL && matrix->x != NULL && filename != NULL);
-
-    int nz = 0;
-
+    assert(matrix != NULL && filename != NULL);
     FILE *fw = fopen(filename, "w");
     if (!fw){
         printf("Error : Failed to open %s\n", filename);
@@ -206,18 +203,23 @@ unsigned short csc_to_file(CSC *matrix, char *filename){
     
     fprintf(fw, "%d %d %d\n", matrix->nbRows, matrix->nbCols, matrix->nnz);
    
+    unsigned int nz = 0;
     for (int i = 0; i <= matrix->nbCols-1 && nz < matrix->nnz ;i++){
         for(int j = matrix->p[i]; j <= matrix->p[i+1] - 1; j++){
-            fprintf(fw, "%d %d %lf\n", matrix->i[j-START], i+START, matrix->x[j-START]);
+            if (fabs(matrix->x[j-START]) < TOLNUMBER){
+                // Ecrire sous format %e si on est < TOLNUMBER
+                fprintf(fw, "%d %d %e\n", matrix->i[j-START], i+START, matrix->x[j-START]);
+            }
+            else {
+                fprintf(fw, "%d %d %lf\n", matrix->i[j-START], i+START, matrix->x[j-START]);
+            }
+            
             nz += 1;
         }
     }
-
     fclose(fw);
-
     return 1;
 }
-
 
 void destroy_matrix(CSC *matrix){
     assert(matrix != NULL && matrix->i != NULL && matrix->x != NULL && matrix->p != NULL);

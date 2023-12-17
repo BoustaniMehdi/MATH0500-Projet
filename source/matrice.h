@@ -19,6 +19,14 @@
 #define START 1
 
 /**
+ * TOLNUMBER
+ * 
+ * @brief Macro utilisée pour écrire le nombre sous format %e dans le cas où l'on dépasse une certaine tolélrance
+ */
+#define TOLNUMBER 1e-7
+
+
+/**
  * CSC
  * 
  * @brief Structure de données "Compressed Sparse Column" pour la matrice creuse.
