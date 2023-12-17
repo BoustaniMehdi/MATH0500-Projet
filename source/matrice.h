@@ -101,4 +101,20 @@ void destroy_matrix(CSC *matrix);
  */
 unsigned short csc_to_file(CSC *matrix, char *filename);
 
+/**
+ * check_mtx
+ * 
+ * @brief Vérifie si un fichier mtx ne contient pas des valeurs non cohérentes
+ *
+ * @param row la ligne courante
+ * @param col la colonne courante
+ * @param value la valeur présente dans (row, col) de la matrice
+ * 
+ * @pre /
+ *
+ * @return 1, succès.
+ *         0 en cas d'erreur.
+ */
+unsigned short check_mtx(int row, int col, double value);
+
 #endif // __MATRICE__
