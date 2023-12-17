@@ -14,17 +14,14 @@
 MatrixInput *create_input_matrix(CSC *matrix, FILE *fptr){
     assert(matrix != NULL && matrix->p != NULL && matrix->i != NULL && matrix->x != NULL && fptr != NULL);
 
-    int row = 0, col = 0, index = 0; 
+    int row = 0, col = 0, index = 0, countRow = 0; 
     double value = 0;
 
     MatrixInput* entries = malloc(sizeof(MatrixInput));
 
     if(!entries){
         printf("Error : Failed to store the entries of the matrix\n");
-        free(matrix->x);
-        free(matrix->i);
-        free(matrix->p);
-        free(matrix);
+        destroy_matrix(matrix);
         fclose(fptr);
         return NULL;
     }
@@ -33,10 +30,7 @@ MatrixInput *create_input_matrix(CSC *matrix, FILE *fptr){
     if(!entries->rows){
         printf("Error : Failed to store rows of the matrix\n");
         free(entries);
-        free(matrix->x);
-        free(matrix->i);
-        free(matrix->p);
-        free(matrix);
+        destroy_matrix(matrix);
         fclose(fptr);
         return NULL;
     }
@@ -46,10 +40,7 @@ MatrixInput *create_input_matrix(CSC *matrix, FILE *fptr){
         printf("Error : Failed to store columns of the matrix \n");
         free(entries->rows);
         free(entries);
-        free(matrix->x);
-        free(matrix->i);
-        free(matrix->p);
-        free(matrix);
+        destroy_matrix(matrix);
         fclose(fptr);
         return NULL;
     }
@@ -60,25 +51,19 @@ MatrixInput *create_input_matrix(CSC *matrix, FILE *fptr){
         free(entries->cols);
         free(entries->rows);
         free(entries);
-        free(matrix->x);
-        free(matrix->i);
-        free(matrix->p);
-        free(matrix);
+        destroy_matrix(matrix);
         fclose(fptr);
         return NULL;
     }
 
     while(index < matrix->nnz){
-        if(fscanf(fptr, "%d %d %lf", &row, &col, &value) != 3){
-            printf("Error reading file : Corrupted file\n");
+        if(fscanf(fptr, "%d %d %lf", &row, &col, &value) != 3 || value == 0.0 || row < 1 || col < 1){ // Ajout de vérification des valeurs numériques
+            printf("Error reading file : Corrupted file or Some values are incorrect\n");
             free(entries->values);
             free(entries->cols);
             free(entries->rows);
             free(entries);
-            free(matrix->x);
-            free(matrix->i);
-            free(matrix->p);
-            free(matrix);
+            destroy_matrix(matrix);
             fclose(fptr);
             return NULL;
         }
@@ -89,10 +74,23 @@ MatrixInput *create_input_matrix(CSC *matrix, FILE *fptr){
 
         index++;
 
+        countRow++;
+
+    }
+
+    if(countRow != matrix->nnz){
+        printf("Error reading file : Problem with the number of rows\n");
+        free(entries->values);
+        free(entries->cols);
+        free(entries->rows);
+        free(entries);
+        destroy_matrix(matrix);
+        fclose(fptr);
+        return NULL;
+    
     }
 
     return entries;
-
 }
 
 CSC *create_sparse_matrix(char *inputfile){
