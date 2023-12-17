@@ -11,8 +11,21 @@
 #include "produit.h"
 #include "tri.h"
 
+/**
+ * get_nz
+ * 
+ * @brief Enlève les duplications des éléments dans uni (= l'union)
+ *
+ * @param uni l'union des indices de lignes
+ * @param size la taille de l'union
+ * @param dest le tableau dans lequel nous mettons tous les éléments de l'union sans répétition
+ * @param start l'indice par lequel nous commençons à parcourir le tableau dest
+ * 
+ * @pre uni != NULL, dest != NULL
+ *
+ * @return nz, le nombre de non-zeros (des éléments sans répétition)
+ */
 static unsigned int get_nz(int *uni, int size, int *dest, int start);
-
 
 static unsigned int get_nz(int *uni, int size, int *dest, int start){
     assert(uni != NULL && dest != NULL);
@@ -36,34 +49,37 @@ static unsigned int get_nz(int *uni, int size, int *dest, int start){
     return nz;
 }
 
-// -------------------------------------------- PRODUIT REALLOC --------------------------------------------- //
-
 CSC *matrix_matrix_product(CSC *A, CSC *B){
-    assert(A != NULL && B != NULL);
+    assert(A != NULL && A->p != NULL && A->i != NULL && A->x != NULL && 
+           B != NULL && B->p != NULL && B->i != NULL && B->x != NULL);
+
     if (A->nbCols != B->nbRows){
         printf("Erreur : A x B product is not defined\n");
         return NULL;
     }
+
     CSC *C = malloc(sizeof(CSC));
-    // printf("sss\n");
+    
     if (!C){
         printf("Error : Failed to allocate C\n");
         return NULL;
     }
+
     C->p = malloc((B->nbCols +1) * sizeof(int));
     if (!C->p){
         printf("Error : Failed to allocate C.p\n");
         free(C);
         return NULL;
     }
+
     C->p[0] = START;
     C->nbRows = A->nbRows;
     C->nbCols = B->nbCols;
     C->nnz = 0;
 
     // Taille intititale des tableaux y et tmpI
-    int tmpiSize = A->nnz + B->nnz;
-    int ySize = A->nnz + B->nnz;
+    unsigned int tmpiSize = A->nnz + B->nnz;
+    unsigned int ySize = A->nnz + B->nnz;
 
     int *uni = malloc(A->nnz * sizeof(int));
     if (!uni){
@@ -112,14 +128,17 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
 
     for (int j = 0; j < B->nbCols; j++){ // parcourir les colonnes de B
         count = 0;
+
         for (int k = B->p[j] - START; k <= B->p[j+1] - 1 - START; k++){
             int currCol = B->i[k] - START;
+
             for (int i = A->p[currCol] - START; i <= A->p[currCol+1] - 1 - START; i++){
                 uni[count] = A->i[i];
                 tmpx[A->i[i] - START] += B->x[k] * A->x[i];
                 count++;
             }
         }
+
         if (count > 0){
             quickSortIterative(uni, 0, count-1); // trier l'union courante (avec doublons)
         }
@@ -128,6 +147,7 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
         if (C->nnz + count > tmpiSize){
             tmpiSize *= ALLOCATIONFACTOR;
             tmpI = realloc(tmpI, tmpiSize * sizeof(int));
+
             if (!tmpI){
                 printf("Failed to reallocate tmpI\n");
                 free(tmpI);
@@ -140,7 +160,7 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
             }
         }
 
-        // Nombre des elements non-nuls dans l'union (sans rep)
+        // Nombre d'élements non-nuls dans l'union (sans rep)
         nonZeros = get_nz(uni, count, tmpI, C->nnz);
         tmpcount = 0;
 
@@ -148,6 +168,7 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
         if(index + nonZeros > ySize){
             ySize *= ALLOCATIONFACTOR;
             y = realloc(y, ySize * sizeof(double));
+
             if (!y){
                 printf("Failed to reallocate y\n");
                 free(y);
@@ -160,11 +181,11 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
             }
         }
         // Remplir un tableau y temporaire pour les non-nuls
-        for (int l = 0; l < nonZeros; l++){
+        for (unsigned int l = 0; l < nonZeros; l++){
             row = tmpI[l+C->nnz] - START; // ACCEDER LES ELEMENTS POUR EVITER DE TOUT PARCOURIR
             if (tmpx[row] == 0){
-                resZeros += 1;
-                tmpcount += 1;
+                resZeros++;
+                tmpcount++;
                 tmpI[l+C->nnz] = 0;
                 y[index] = 0;
             }
@@ -178,8 +199,10 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
          C->p[j+1] = C->p[j] + nonZeros - tmpcount;
          C->nnz += nonZeros;
     }
+
     free(uni);
     free(tmpx);
+
     nonZeros = C->nnz;
     C->nnz -= resZeros;
 
@@ -195,7 +218,8 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
         free(C);
         return NULL;
     }
-    for (int j = 0; j < nonZeros; j++){
+
+    for (unsigned int j = 0; j < nonZeros; j++){
         if (tmpI[j] != 0){
             C->i[index] = tmpI[j];
             index += 1;
@@ -215,6 +239,7 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
     }
 
     index = 0;
+
     for (int i = 0; i < C->nnz; i++){
         if (y[i] != 0){
             C->x[i] = y[i];
@@ -222,184 +247,11 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
         }
     }
 
-    // A corriger
     free(y);
     free(tmpI);
     return C;
 }
 // ----------------------------------------------------------------------------------------------------------------- //
-
-
-CSC *matrix_matrix_product(CSC *A, CSC *B){
-    assert(A != NULL && A->p != NULL && A->i != NULL && A->x != NULL && 
-           B != NULL && B->p != NULL && B->i != NULL && B->x != NULL && A->nbCols == B->nbRows);
-
-    if (A->nbCols != B->nbRows){
-        printf("Erreur : Le produit AxB n'est pas definie\n");
-        return NULL;
-    }
-
-    CSC *C = malloc(sizeof(CSC));
-    
-    if (!C){
-        printf("Erreur : Echec d'allocation de la matrice C\n");
-        return NULL;
-    }
-
-    C->p = malloc((B->nbCols +1) * sizeof(int));
-
-    if (!C->p){
-        printf("Erreur : Echec d'allocation de C.p\n");
-        free(C);
-        return NULL;
-    }
-
-    C->p[0] = START;
-    C->nbRows = A->nbRows;
-    C->nbCols = B->nbCols;
-    C->nnz = 0;
-
-    int *uni = malloc(A->nnz * sizeof(int));
-    if (!uni){
-        printf("Erreur : Echec d'allocation pour l'union\n");
-        free(C->p);
-        free(C);
-        return NULL;
-    }
-
-    double *y = malloc((B->nnz + A->nnz) * ALLOCATIONFACTOR * sizeof(double));
-    if (!y){
-        free(uni);
-        free(C->p);
-        free(C);
-        printf("Erreur : Echec d'allocation pour y (= resultat matrice vecteur)\n ");
-        return NULL;
-    }
-
-    double *tmpx = calloc((B->nnz + A->nnz), sizeof(double));
-    if (!tmpx){
-        printf("Erreur : Echec d'allocation pour tmpx (= resultat matrice vecteur)\n");
-        free(uni);
-        free(y);
-        free(C->p);
-        free(C);
-        return NULL;
-    }
-
-    int *tmpI = malloc((B->nnz + A->nnz) * ALLOCATIONFACTOR * sizeof(int)); // MAX TAILLE = ?
-    if (!tmpI){
-        printf("Erreur : Echec d'allocation pour tmpI\n");
-        free(tmpx);
-        free(uni);
-        free(y);
-        free(C->p);
-        free(C);
-        return NULL;
-    }
-
-    unsigned int index = 0; // indice pour remplir le tableau temporaire y (pour les non-zeros)
-    unsigned int count = 0; // indice pour remplir l'union
-    unsigned int nonZeros = 0; // comptage des non-zeros
-    unsigned int resZeros = 0;
-    unsigned int tmpcount = 0;
-    unsigned int row = 0;
-
-    for (int j = 0; j < B->nbCols; j++){ // parcourir les colonnes de B
-        count = 0;
-
-        for (int k = B->p[j] - START; k <= B->p[j+1] - 1 - START; k++){
-            int currCol = B->i[k] - START;
-            for (int i = A->p[currCol] - START; i <= A->p[currCol+1] - 1 - START; i++){
-                uni[count] = A->i[i];
-                tmpx[A->i[i] - START] += B->x[k] * A->x[i];
-                count++;
-            }
-        }
-
-        if (count > 0){
-            quickSortIterative(uni, 0, count-1); // trier l'union courante (avec doublons)
-        }
-     
-        // Nombre des elements non-nuls dans l'union (sans rep)
-        nonZeros = get_nz(uni, count, tmpI, C->nnz);
-        tmpcount = 0;
-
-        // Remplir un tableau y temporaire pour les non-nuls
-        for (unsigned int l = 0; l < nonZeros; l++){
-            row = tmpI[l+C->nnz] - START; // ACCEDER LES ELEMENTS POUR EVITER DE TOUT PARCOURIR
-
-            if (tmpx[row] == 0){
-                resZeros++;
-                tmpcount++;
-                tmpI[l+C->nnz] = 0;
-                y[index] = 0;
-            }
-
-            else { 
-                y[index] = tmpx[row];
-                index += 1;
-            }
-
-            tmpx[row] = 0;
-        }
-
-        // mettre a jour C.p et C.nz
-         C->p[j+1] = C->p[j] + nonZeros - tmpcount;
-         C->nnz += nonZeros;
-    }
-
-    free(uni);
-    free(tmpx);
-
-    nonZeros = C->nnz;
-
-    C->nnz -= resZeros;
-
-    index = 0;
-    
-    C->i = malloc(C->nnz * sizeof(int));
-    if(!C->i){
-        printf("Erreur : Echec d'allocation de C.i \n");
-        free(y);
-        free(tmpI);
-        free(C->p);
-        free(C);
-        return NULL;
-    }
-
-    for (unsigned int j = 0; j < nonZeros; j++){
-        if (tmpI[j] != 0){
-            C->i[index] = tmpI[j];
-            index += 1;
-        }
-    }
-
-    C->x = malloc(C->nnz * sizeof(double));
-    if(!C->x){
-        printf("Erreur : Echec d'allocation de C.i \n");
-        free(y);
-        free(tmpI);
-        free(C->p);
-        free(C->i);
-        free(C);
-        return NULL;
-    }
-
-    index = 0;
-
-    for (int i = 0; i < C->nnz; i++){
-        if (y[i] != 0){
-            C->x[i] = y[i];
-            index += 1;
-        }
-    }
-
-    // A corriger
-    free(y);
-    free(tmpI);
-
-    return C;
-}
 
 void matrix_vector_product(CSC *matrix, double *vect, int n, double *result){
     assert(matrix != NULL && vect != NULL && matrix->nbRows == n && result != NULL);

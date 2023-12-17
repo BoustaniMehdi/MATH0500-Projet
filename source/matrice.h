@@ -5,7 +5,7 @@
  * \version 0.1
  * \date 17/12/2023
  *
- * Crée une matrice creuse ou un vecteur creux correspondant au fichier d'input, ainsi la structure de donnée dans laquelle nous stockons ceux-ci
+ * Crée une matrice creuse correspondant au fichier d'input, ainsi la structure de donnée dans laquelle nous stockons celle-ci
  */
 
 #ifndef __MATRICE__
@@ -21,10 +21,9 @@
 /**
  * TOLNUMBER
  * 
- * @brief Macro utilisée pour écrire le nombre sous format %e dans le cas où l'on dépasse une certaine tolélrance
+ * @brief Macro utilisée pour écrire le nombre sous format %e dans le cas où l'on dépasse une certaine tolérance
  */
 #define TOLNUMBER 1e-7
-
 
 /**
  * CSC
@@ -69,21 +68,6 @@ typedef struct{
 CSC *create_sparse_matrix(char *filename);
 
 /**
- * create_input_matrix
- * 
- * @brief Crée une matrice en lisant le fichier mtx.
- *
- * @param filename le nom du fichier mtx contenant la matrice creuse
- * @param FILE *fptr le pointeur du fichier mtx à prendre en compte
- * 
- * @pre matrix != NULL, fptr != NULL
- *
- * @return MatrixInput *, un pointeur vers notre matrice.
- *         NULL en cas d'erreur.
- */
-MatrixInput *create_input_matrix(CSC *matrix, FILE *fptr);
-
-/**
  * destroy_matrix
  * 
  * @brief Détruit (free) une matrice creuse compressée par colonne.
@@ -123,20 +107,5 @@ void destroy_matrix(CSC *matrix);
  *         0 en cas d'erreur.
  */
 unsigned short csc_to_file(CSC *matrix, char *filename);
-
-/**
- * check_mtx
- * 
- * @brief Vérifie si un fichier mtx ne contient pas des valeurs non cohérentes
- *
- * @param row la ligne courante
- * @param col la colonne courante
- * 
- * @pre /
- *
- * @return 1, succès.
- *         0 en cas d'erreur.
- */
-unsigned short check_mtx(int row, int col);
 
 #endif // __MATRICE__

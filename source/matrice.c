@@ -7,23 +7,37 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 
 #include "matrice.h"
 #include "tri.h"
 
+/**
+ * get_entries_input
+ * 
+ * @brief Crée une matrice en lisant le fichier mtx.
+ *
+ * @param filename le nom du fichier mtx contenant la matrice creuse
+ * 
+ * @pre filename != NULL
+ *
+ * @return MatrixInput *, un pointeur vers notre matrice.
+ *         NULL en cas d'erreur.
+ */
 static MatrixInput *get_entries_input(char *filename);
 
+/**
+ * destroy_entries
+ * 
+ * @brief Détruit (free) notre matrice input.
+ *
+ * @param entries la matrice input à détruire
+ * 
+ * @pre entries != NULL, entries->rows != NULL, entries->cols != NULL, entries->values != NULL
+ *
+ * @return /
+ */
 static void destroy_entries(MatrixInput *entries);
-
-static void destroy_entries(MatrixInput *entries){
-    assert(entries != NULL && entries->rows != NULL && 
-      entries->cols != NULL && entries->values != NULL);
-    
-    free(entries->rows);
-    free(entries->cols);
-    free(entries->values);
-    free(entries);
-}
 
 static MatrixInput *get_entries_input(char *filename){
     assert(filename != NULL);
@@ -194,8 +208,12 @@ CSC *create_sparse_matrix(char *inputfile){
 }
 
 unsigned short csc_to_file(CSC *matrix, char *filename){
-    assert(matrix != NULL && filename != NULL);
+    assert(matrix != NULL && matrix->p != NULL && matrix->i != NULL && matrix->x != NULL && filename != NULL);
+
+    int nz = 0;
+
     FILE *fw = fopen(filename, "w");
+
     if (!fw){
         printf("Error : Failed to open %s\n", filename);
         return 0;
@@ -203,21 +221,22 @@ unsigned short csc_to_file(CSC *matrix, char *filename){
     
     fprintf(fw, "%d %d %d\n", matrix->nbRows, matrix->nbCols, matrix->nnz);
    
-    unsigned int nz = 0;
     for (int i = 0; i <= matrix->nbCols-1 && nz < matrix->nnz ;i++){
         for(int j = matrix->p[i]; j <= matrix->p[i+1] - 1; j++){
+
             if (fabs(matrix->x[j-START]) < TOLNUMBER){
-                // Ecrire sous format %e si on est < TOLNUMBER
-                fprintf(fw, "%d %d %e\n", matrix->i[j-START], i+START, matrix->x[j-START]);
+                fprintf(fw, "%d %d %e\n", matrix->i[j-START], i+START, matrix->x[j-START]);// Ecrire sous format %e si on est < TOLNUMBER
             }
             else {
                 fprintf(fw, "%d %d %lf\n", matrix->i[j-START], i+START, matrix->x[j-START]);
             }
             
-            nz += 1;
+            nz++;
         }
     }
+
     fclose(fw);
+
     return 1;
 }
 
@@ -228,4 +247,14 @@ void destroy_matrix(CSC *matrix){
     free(matrix->x);
     free(matrix->p);
     free(matrix);
+}
+
+static void destroy_entries(MatrixInput *entries){
+    assert(entries != NULL && entries->rows != NULL && 
+      entries->cols != NULL && entries->values != NULL);
+    
+    free(entries->rows);
+    free(entries->cols);
+    free(entries->values);
+    free(entries);
 }

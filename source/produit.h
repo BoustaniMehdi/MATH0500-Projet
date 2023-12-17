@@ -4,10 +4,13 @@
  * \author Albashityalshaier Abdelkader, Boustani Mehdi -- Université de Liège (ULiège)
  * \version 0.1
  * \date 17/12/2023
- *
- * Crée une matrice creuse correspondant au fichier d'input, ainsi la structure de donnée dans laquelle nous stockons ceux-ci
  */
 
+/**
+ * ALLOCATIONFACTOR
+ * 
+ * @brief Macro utilisée pour l'allocation de tableau
+ */
 #define ALLOCATIONFACTOR 2
 
 #include "valeur_propre.h"

@@ -7,7 +7,11 @@
 #ifndef __VECTEUR__
 #define __VECTEUR__
 
-
+/**
+ * SparseVector
+ * 
+ * @brief Structure de données "Compressed Sparse Column" pour le vecteur creux.
+ */
 typedef struct{
     int *i;
     double *x;
@@ -114,7 +118,5 @@ double *divide_vect_scalar(double *vect, int n, double scalar);
  * @return /
  */
 double get_largest_module(double *vect, int n);
-
-
 
 #endif //__VECTEUR__

@@ -8,7 +8,7 @@
 #include "tri.h"
 
 
-// Determine si 2 vecteurs sont egaux à une tolérance près
+// Détermine si 2 vecteurs sont egaux à une tolérance près
 unsigned short are_equal(double *vect1, double *vect2, int n){
     assert(vect1 != NULL && vect2 != NULL && n > 0);
 
@@ -17,6 +17,7 @@ unsigned short are_equal(double *vect1, double *vect2, int n){
             return 0;  // Vecteur non-egaux
         }
     }
+
     return 1;
 }
 
@@ -50,7 +51,7 @@ double *get_eigen_vector(CSC *A, double *eigenValue, unsigned short *convergence
 
     while(iter < MAX_ITER){
 
-        if (are_equal(x, z, n)){ // vecteurs égaux à une tolérance près
+        if(are_equal(x, z, n)){ // vecteurs égaux à une tolérance près
             *convergence = 1;
             free(x);
             printf("The power method converged with %d iterations\n", iter);
@@ -71,6 +72,7 @@ double *get_eigen_vector(CSC *A, double *eigenValue, unsigned short *convergence
     }
 
     iter++;
+
     if(iter > MAX_ITER){
         printf("The power method did not converge after %d iterations.\n", MAX_ITER);
         printf("To achieve convergence, it is necessary to increase the number of iterations or adjust input data to improve convergence.\n\n");
@@ -80,5 +82,3 @@ double *get_eigen_vector(CSC *A, double *eigenValue, unsigned short *convergence
 
     return z;
 }
-
-// ------------------------------------------------------------------------------------------------------------------------------- //
