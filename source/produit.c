@@ -41,18 +41,18 @@ static unsigned int get_nz(int *uni, int size, int *dest, int start){
 CSC *matrix_matrix_product(CSC *A, CSC *B){
     assert(A != NULL && B != NULL);
     if (A->nbCols != B->nbRows){
-        printf("Erreur : Le produit AxB n'est pas definie\n");
+        printf("Erreur : A x B product is not defined\n");
         return NULL;
     }
     CSC *C = malloc(sizeof(CSC));
     // printf("sss\n");
     if (!C){
-        printf("Erreur : Echec d'allocation de la matrice C\n");
+        printf("Error : Failed to allocate C\n");
         return NULL;
     }
     C->p = malloc((B->nbCols +1) * sizeof(int));
     if (!C->p){
-        printf("Erreur : Echec d'allocation de C.p\n");
+        printf("Error : Failed to allocate C.p\n");
         free(C);
         return NULL;
     }
@@ -67,7 +67,7 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
 
     int *uni = malloc(A->nnz * sizeof(int));
     if (!uni){
-        printf("Erreur : Echec d'allocation pour l'union\n");
+        printf("Error : Failed to allocate union C\n");
         free(C->p);
         free(C);
         return NULL;
@@ -78,13 +78,13 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
         free(uni);
         free(C->p);
         free(C);
-        printf("Erreur : Echec d'allocation pour y (= resultat matrice vecteur)\n ");
+        printf("Error : Failed to allocate y\n ");
         return NULL;
     }
 
     double *tmpx = calloc((B->nnz + A->nnz) , sizeof(double));
     if (!tmpx){
-        printf("Erreur : Echec d'allocation pour tmpx (= resultat matrice vecteur)\n");
+        printf("Error : Failed to allocate tmpx\n");
         free(uni);
         free(y);
         free(C->p);
@@ -94,7 +94,7 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
 
     int *tmpI = malloc(tmpiSize * sizeof(int)); // MAX TAILLE = ?
     if (!tmpI){
-        printf("Erreur : Echec d'allocation pour tmpI\n");
+        printf("Error : Failed to allocate tmpI\n");
         free(tmpx);
         free(uni);
         free(y);
@@ -188,7 +188,7 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
     // REMPLIR C.i
     C->i = malloc(C->nnz * sizeof(int));
     if(!C->i){
-        printf("Erreur : Echec d'allocation de C.i \n");
+        printf("Error : Failed to allocate C.i\n");
         free(y);
         free(tmpI);
         free(C->p);
@@ -205,7 +205,7 @@ CSC *matrix_matrix_product(CSC *A, CSC *B){
     // REMPLIR C.x
     C->x = malloc(C->nnz * sizeof(double));
     if(!C->x){
-        printf("Erreur : Echec d'allocation de C.i \n");
+        printf("Error : Failed to allocate C.x\n");
         free(y);
         free(tmpI);
         free(C->p);
