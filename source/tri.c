@@ -4,6 +4,7 @@
  * Fichier tri.c
  * 
  * SOURCE de l'algorithme : https://www.geeksforgeeks.org/c-program-for-iterative-quick-sort/
+ *                          https://www.geeksforgeeks.org/c-program-for-merge-sort/
  */
 
 #include <stdio.h>
