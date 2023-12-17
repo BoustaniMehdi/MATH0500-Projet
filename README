@@ -1,0 +1,9 @@
+# MATH0500-Projet
+
+ Commande pour le produit de matrices creuses: make produit
+    Execution: ./produit
+
+ Commande pour la méthode puissance: make puissance
+    Execution: ./puissance
+
+ 
