@@ -11,12 +11,9 @@
 #include "matrice.h"
 #include "tri.h"
 
-unsigned short check_mtx(int row, int col, double value){
-    if(value == 0.0){
-        printf("Error : Some values are zero\n");
-        return 0;
-    }
-    else if(row < 1){
+unsigned short check_mtx(int row, int col){
+    
+    if(row < 1){
         printf("Error : Some rows are < 1\n");
         return 0;
     }
@@ -32,7 +29,7 @@ unsigned short check_mtx(int row, int col, double value){
 MatrixInput *create_input_matrix(CSC *matrix, FILE *fptr){
     assert(matrix != NULL && matrix->p != NULL && matrix->i != NULL && matrix->x != NULL && fptr != NULL);
 
-    int row = 0, col = 0, index = 0, countRow = 0; 
+    int row = 0, col = 0, index = 0; 
     double value = 0;
 
     MatrixInput* entries = malloc(sizeof(MatrixInput));
@@ -75,7 +72,7 @@ MatrixInput *create_input_matrix(CSC *matrix, FILE *fptr){
     }
 
     while(index < matrix->nnz){
-        if(fscanf(fptr, "%d %d %lf", &row, &col, &value) != 3 || !check_mtx(row, col, value)){ // Ajout de vérification des valeurs numériques
+        if(fscanf(fptr, "%d %d %lf", &row, &col, &value) != 3 || !check_mtx(row, col)){ // Ajout de vérification des valeurs numériques
             printf("Error reading file : Corrupted file or Some values are incorrect\n");
             free(entries->values);
             free(entries->cols);
@@ -86,26 +83,17 @@ MatrixInput *create_input_matrix(CSC *matrix, FILE *fptr){
             return NULL;
         }
 
-        entries->rows[index] = row;
-        entries->cols[index] = col;
-        entries->values[index] = value;
+        if(value != 0.0){
+            entries->rows[index] = row;
+            entries->cols[index] = col;
+            entries->values[index] = value;
+        }
+        else{
+            matrix->nnz--;
+        }
 
         index++;
 
-        countRow++;
-
-    }
-
-    if(countRow != matrix->nnz){
-        printf("Error reading file : Problem with the number of rows\n");
-        free(entries->values);
-        free(entries->cols);
-        free(entries->rows);
-        free(entries);
-        destroy_matrix(matrix);
-        fclose(fptr);
-        return NULL;
-    
     }
 
     return entries;
@@ -172,8 +160,8 @@ CSC *create_sparse_matrix(char *inputfile){
         return NULL;
     }
 
-    mergeSort(entries->rows, entries->cols, entries->values, matrix->nnz);
-    // quickSortIterativematrix(entries->rows,entries->cols, entries->values, 0, matrix->nnz - 1);
+    //mergeSort(entries->rows, entries->cols, entries->values, matrix->nnz);
+    quickSortIterativeMatrix(entries->rows,entries->cols, entries->values, 0, matrix->nnz - 1);
 
     while(index < matrix->nnz){
 

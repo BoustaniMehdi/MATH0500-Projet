@@ -19,14 +19,14 @@ int main(int argc, char *argv[]){
 
     if(strcmp(argv[0], "./produit") == 0){
         // MATRICE A 
-        CSC *A = create_sparse_matrix("ds-big.A.mtx");
+        CSC *A = create_sparse_matrix("neos2.A.mtx");
         if (!A){
             printf("Failed to create A \n");
             return 1;
         }
 
         // MATRICE B
-        CSC *B = create_sparse_matrix("ds-big.B.mtx");
+        CSC *B = create_sparse_matrix("neos2.B.mtx");
         if (!B){
             printf("Failed to create B\n");
             destroy_matrix(A);

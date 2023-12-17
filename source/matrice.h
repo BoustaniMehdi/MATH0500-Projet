@@ -108,13 +108,12 @@ unsigned short csc_to_file(CSC *matrix, char *filename);
  *
  * @param row la ligne courante
  * @param col la colonne courante
- * @param value la valeur présente dans (row, col) de la matrice
  * 
  * @pre /
  *
  * @return 1, succès.
  *         0 en cas d'erreur.
  */
-unsigned short check_mtx(int row, int col, double value);
+unsigned short check_mtx(int row, int col);
 
 #endif // __MATRICE__
