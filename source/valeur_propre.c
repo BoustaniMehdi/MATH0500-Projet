@@ -20,7 +20,7 @@ unsigned short are_equal(double *vect1, double *vect2, int n){
     return 1;
 }
 
-double *get_eigen_vector(CSC *A, double *eigenValue){
+double *get_eigen_vector(CSC *A, double *eigenValue, unsigned short *convergence){
     assert(A != NULL && A->p != NULL && A->i != NULL && A->x != NULL && eigenValue != NULL && A->nbCols == A->nbRows);
 
     int iter = 1;
@@ -51,8 +51,9 @@ double *get_eigen_vector(CSC *A, double *eigenValue){
     while(iter < MAX_ITER){
 
         if (are_equal(x, z, n)){ // vecteurs égaux à une tolérance près
+            *convergence = 1;
             free(x);
-            printf("iter = %d\n", iter);
+            printf("The power method converged with %d iterations\n", iter);
             return w;
         }
 
@@ -67,6 +68,12 @@ double *get_eigen_vector(CSC *A, double *eigenValue){
         z = divide_vect_scalar(w, n, norme); // normaliser le vecteur w
 
         iter++;     
+    }
+
+    iter++;
+    if(iter > MAX_ITER){
+        printf("The power method did not converge after %d iterations.\n", MAX_ITER);
+        printf("To achieve convergence, it is necessary to increase the number of iterations or adjust input data to improve convergence.\n\n");
     }
 
     free(x);

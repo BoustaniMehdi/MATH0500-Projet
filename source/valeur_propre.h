@@ -37,13 +37,14 @@ unsigned short are_equal(double *vect1, double *vect2, int n);
  *
  * @param A la matrice creuse
  * @param eigenValue la valeur propre de la matrice A
+ * @param convergence valeur booleenne donnant l'information sur la convergence de la méthode de puissance 
  * 
  * @pre A != NULL, A->p != NULL, A->i != NULL, A->x != NULL, eigenValue != NULL
  *
  * @return le vecteur propre associé à la valeur propre de A si la méthode de puissance a convergé.
  *         NULL en cas d'erreur.
  */
-double *get_eigen_vector(CSC *A, double *eigenValue);
+double *get_eigen_vector(CSC *A, double *eigenValue, unsigned short *convergence);
 
 
 

@@ -19,14 +19,14 @@ int main(int argc, char *argv[]){
 
     if(strcmp(argv[0], "./produit") == 0){
         // MATRICE A
-        CSC *A = create_sparse_matrix("neos2.A.mtx");
+        CSC *A = create_sparse_matrix("watson_2.A.mtx");
         if (!A){
             printf("Failed to create A \n");
             return 1;
         }
        
         // // MATRICE B
-        CSC *B = create_sparse_matrix("neos2.B.mtx");
+        CSC *B = create_sparse_matrix("watson_2.B.mtx");
         if (!B){
             printf("Failed to create B\n");
             destroy_matrix(A);
@@ -59,16 +59,17 @@ int main(int argc, char *argv[]){
 
      else if (strcmp(argv[0], "./puissance") == 0){
          // MATRICE A
-        CSC *A = create_sparse_matrix("produit.mtx");
+        CSC *A = create_sparse_matrix("self.B.mtx");
         if (!A){
             printf("Failed to create matrix\n");
             return 1;
         }
 
         // Methode de la puissance
+        unsigned short convergence = 0;
         unsigned int n = A->nbCols;
         double eigenValue = 0;
-        double *eigenVector = get_eigen_vector(A, &eigenValue);
+        double *eigenVector = get_eigen_vector(A, &eigenValue, &convergence);
 
         if (!eigenVector){
             printf("Failed to get the dominant eigen value\n");
@@ -76,7 +77,10 @@ int main(int argc, char *argv[]){
             return 1;
         }
 
-        printf("Dominant eigen value : %lf\n", eigenValue);
+        if(convergence)
+            printf("Dominant eigen value : %lf\n", eigenValue);
+        else
+            printf("Current dominant eigen value : %lf\n", eigenValue);
 
         // Transformer le vecteur en vecteur creux
         SparseVector *sparseEigenVector = create_sparse_vector(eigenVector, n);
