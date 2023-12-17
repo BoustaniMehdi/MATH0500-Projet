@@ -2,7 +2,6 @@
  * \file produit.h
  * \brief Header pour les produits de la matrice-matrice et matrice-vecteur
  * \author Albashityalshaier Abdelkader, Boustani Mehdi -- Université de Liège (ULiège)
- * \version 0.1
  * \date 17/12/2023
  */
 

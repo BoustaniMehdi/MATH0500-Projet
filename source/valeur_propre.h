@@ -10,7 +10,18 @@
 #ifndef __VALEURPROPRE__
 #define __VALEURPROPRE__
 
+/**
+ * MAX_ITER
+ * 
+ * @brief Macro utilisée pour le nombre maximum d'itération pour la méthode de la puissance
+ */
 #define MAX_ITER 10000
+
+/**
+ * TOLERANCE
+ * 
+ * @brief Macro utilisée donné une tolérance permettant de comparer deux vecteurs
+ */
 #define TOLERANCE 1e-4
 
 

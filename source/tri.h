@@ -79,12 +79,4 @@ void mergeSort(int lignes[], int cols[], double nnz[], int n);
  */
 void merge(int lignes[], int cols[], double nnz[], int l, int m, int r);
 
-void swapDouble(double* a, double* b);
-
-int partitionMatrix(int col[], int row[], double values[], int l, int h);
-
-void quickSortIterativeMatrix(int row[], int col[], double values[], int l, int h);
-
-
-
 #endif
