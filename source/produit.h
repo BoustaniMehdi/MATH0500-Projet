@@ -7,36 +7,10 @@
  *
  * Crée une matrice creuse ou un vecteur creux correspondant au fichier d'input, ainsi la structure de donnée dans laquelle nous stockons ceux-ci
  */
-#ifndef __PRODUCT__
-#define __PRODUCT__
 
+#define ALLOCATIONFACTOR 3
 
-#include "valeur_propre.h"
+#include "matrice.h"
 
-/**
- * matrix_matrix_product
- * 
- * @brief Calcule le produit de deux matrices creuses
- *
- * @param A la première matrice creuse
- * @param B la deuxème matrice creuse
- *
- * @return CSC *C, le résultat du produit A*B
- */
 CSC *matrix_matrix_product(CSC *A, CSC *B);
-
-/**
- * matrix_vector_product
- * 
- * @brief Calcule le produit d'une matrice creuse avec un vecteur
- *
- * @param matrix la matrice creuse
- * @param vect le vecteur
- * @param n la taille du vecteur
- * @param result le résultat du produit étant un vecteur
- *
- * @return /
- */
 void matrix_vector_product(CSC *matrix, double *vect, int n, double *result);
-
-#endif//__PRODUCT__

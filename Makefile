@@ -1,13 +1,13 @@
 # Tools & flags
 CC=gcc
-CFLAGS=--std=c99 --pedantic -Wall -W -Wmissing-prototypes -O3 -g 
+CFLAGS=--std=c99 --pedantic -Wall -W -Wmissing-prototypes -O3
 LD=gcc
 LDFLAGS=
 
 # Files
 PRODUIT_EXEC=produit
 PUISSANCE_EXEC=puissance
-PRODUIT_OBJECTS=source/matrice.o source/produit.o source/tri.o source/vecteur.o source/valeur_propre.o
+PRODUIT_OBJECTS=source/matrice.o source/produit.o source/tri.o source/vecteur.o
 PUISSANCE_OBJECTS=source/matrice.o source/valeur_propre.o source/produit.o source/tri.o source/vecteur.o
 MAIN_FILE=source/main.c
 

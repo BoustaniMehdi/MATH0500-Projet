@@ -96,7 +96,6 @@ static int min(int x, int y) {
 /* Iterative mergesort function to sort arr[0...n-1] */
 void mergeSort(int lignes[], int cols[], double nnz[], int n){
     assert(lignes != NULL && cols != NULL && nnz != NULL);
-
     int curr_size; // For current size of subarrays to be merged
                     // curr_size varies from 1 to n/2
     int left_start; // For picking starting index of left subarray
@@ -125,7 +124,6 @@ void mergeSort(int lignes[], int cols[], double nnz[], int n){
 /* Function to merge the two haves cols[l..m] and cols[m+1..r] of array cols[] */
 void merge(int lignes[], int cols[], double nnz[], int l, int m, int r){
     assert(lignes != NULL && cols != NULL && nnz != NULL);
-    
 	int i, j, k;
 	int n1 = m - l + 1;
 	int n2 = r - m;
@@ -202,71 +200,4 @@ void merge(int lignes[], int cols[], double nnz[], int l, int m, int r){
     free(lignesR);
     free(nnzL);
     free(nnzR);
-}
-
-void swapDouble(double* a, double* b){
-    assert(a != NULL && b != NULL);
-
-    double t = *a;
-    *a = *b;
-    *b = t;
-}
-
-void quickSortIterativeMatrix(int row[], int col[], double values[], int l, int h){
-    assert(col != NULL);
-
-    // Create an auxiliary stack
-    int *stack = malloc((h-l+1)*sizeof(int));
- 
-    // initialize top of stack
-    int top = -1;
- 
-    // push initial values of l and h to stack
-    stack[++top] = l;
-    stack[++top] = h;
- 
-    // Keep popping from stack while is not empty
-    while (top >= 0) {
-        // Pop h and l
-        h = stack[top--];
-        l = stack[top--];
- 
-        // Set pivot element at its correct position
-        // in sorted array
-        int p = partitionMatrix(col,row, values, l, h);
- 
-        // If there are elements on left side of pivot,
-        // then push left side to stack
-        if (p - 1 > l) {
-            stack[++top] = l;
-            stack[++top] = p - 1;
-        }
- 
-        // If there are elements on right side of pivot,
-        // then push right side to stack
-        if (p + 1 < h) {
-            stack[++top] = p + 1;
-            stack[++top] = h;
-        }
-    }
-}
-
-int partitionMatrix(int col[], int row[], double values[], int l, int h){
-    assert(col != NULL);
-
-    int x = col[h];
-    int i = (l - 1);
- 
-    for (int j = l; j <= h - 1; j++) {
-        if (col[j] < x) {
-            i++;
-            swap(&col[i], &col[j]);
-            swap(&row[i], &row[j]);
-            swapDouble(&values[i], &values[j]);
-        }
-    }
-    swap(&col[i + 1], &col[h]);
-    swap(&row[i + 1], &row[h]);
-    swapDouble(&values[i + 1], &values[h]);
-    return (i + 1);
 }

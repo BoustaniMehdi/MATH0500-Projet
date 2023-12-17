@@ -11,158 +11,152 @@
 #include "matrice.h"
 #include "tri.h"
 
-unsigned short check_mtx(int row, int col){
+static MatrixInput *get_entries_input(char *filename);
+static void destroy_entries(MatrixInput *entries);
+
+static void destroy_entries(MatrixInput *entries){
+    assert(entries != NULL && entries->rows != NULL && 
+      entries->cols != NULL && entries->values != NULL);
     
-    if(row < 1){
-        printf("Error : Some rows are < 1\n");
-        return 0;
-    }
-
-    else if(col < 1){
-        printf("Error : Some columns are < 1\n");
-        return 0;
-    }
-
-    return 1;
+    free(entries->rows);
+    free(entries->cols);
+    free(entries->values);
+    free(entries);
 }
 
-MatrixInput *create_input_matrix(CSC *matrix, FILE *fptr){
-    assert(matrix != NULL && matrix->p != NULL && matrix->i != NULL && matrix->x != NULL && fptr != NULL);
-
-    int row = 0, col = 0, index = 0; 
+static MatrixInput *get_entries_input(char *filename){
+    assert(filename != NULL);
+    int row = 0, col = 0, index = 0, indexEntries = 0;
     double value = 0;
 
-    MatrixInput* entries = malloc(sizeof(MatrixInput));
+    FILE *fptr = fopen(filename, "r");
+    if (!fptr){
+        printf("Error : Failed to open %s\n", filename);
+        return NULL;
+    }
 
-    if(!entries){
-        printf("Error : Failed to store the entries of the matrix\n");
-        destroy_matrix(matrix);
+    MatrixInput *entries = malloc(sizeof(MatrixInput));
+    if (!entries){
+        printf("Error : Failed to allocate entries\n");
         fclose(fptr);
         return NULL;
     }
 
-    entries->rows = malloc(matrix->nnz * sizeof(int));
-    if(!entries->rows){
-        printf("Error : Failed to store rows of the matrix\n");
+    if (fscanf(fptr, "%d %d %d", &entries->nbRows, &entries->nbCols, &entries->nnz) != 3){
+        printf("Error : Failed to read file -- Corrupted file\n");
+        fclose(fptr);
         free(entries);
-        destroy_matrix(matrix);
+        return NULL;
+    }
+    
+    entries->rows = malloc(entries->nnz * sizeof(int));
+    if (!entries->rows){
+        printf("Error : Failed to allocate entries.rows\n ");
         fclose(fptr);
+        free(entries);
         return NULL;
     }
 
-    entries->cols = malloc(matrix->nnz * sizeof(int));
-    if(!entries->cols){
-        printf("Error : Failed to store columns of the matrix \n");
+    entries->cols = malloc(entries->nnz * sizeof(int));
+    if (!entries->cols){
+        printf("Error : Failed to allocate entries.cols\n ");
+        fclose(fptr);
         free(entries->rows);
         free(entries);
-        destroy_matrix(matrix);
-        fclose(fptr);
         return NULL;
     }
 
-    entries->values = malloc(matrix->nnz * sizeof(double));
-    if(!entries->values){
-        printf("Error : Failed to store non-zeros of the matrix \n");
+    entries->values = malloc(entries->nnz * sizeof(double));
+    if (!entries->values){
+        printf("Error : Failed to allocate entries.values\n ");
+        fclose(fptr);
+        free(entries->rows);
         free(entries->cols);
-        free(entries->rows);
         free(entries);
-        destroy_matrix(matrix);
-        fclose(fptr);
         return NULL;
     }
 
-    while(index < matrix->nnz){
-        if(fscanf(fptr, "%d %d %lf", &row, &col, &value) != 3 || !check_mtx(row, col)){ // Ajout de vérification des valeurs numériques
-            printf("Error reading file : Corrupted file or Some values are incorrect\n");
-            free(entries->values);
-            free(entries->cols);
-            free(entries->rows);
-            free(entries);
-            destroy_matrix(matrix);
+    while (index < entries->nnz){
+        printf("%d\n", index);
+        if(fscanf(fptr, "%d %d %lf", &row, &col, &value) != 3){
+            printf("Error reading file : Incomplete or corrupted file\n");
             fclose(fptr);
+            free(entries->values);
+            free(entries->rows);
+            free(entries->cols);
+            free(entries);
             return NULL;
         }
-
-        if(value != 0.0){
-            entries->rows[index] = row;
-            entries->cols[index] = col;
-            entries->values[index] = value;
-        }
-        else{
-            matrix->nnz--;
+        // Ne pas prendre en compte les zeros dans le fichier
+        if (value != 0){
+            entries->rows[indexEntries] = row;
+            entries->cols[indexEntries] = col;
+            entries->values[indexEntries] = value;
+            indexEntries++;
         }
 
-        index++;
-
+        index ++;
     }
-
+    entries->nnz = indexEntries;
+    fclose(fptr);
     return entries;
 }
 
 CSC *create_sparse_matrix(char *inputfile){
     assert(inputfile != NULL);
 
-    int currCol = 0, indexCol = 0, index = 0;
-    
+    int row = 0, col = 0, currCol = 0, indexCol = 0, index = 0;
+    double value = 0;
+
+    // Chercher les données du fichier
+    MatrixInput *entries = get_entries_input(inputfile);
+    if (!entries){
+        printf("Failed to fetch data from %s\n", inputfile);
+        return NULL;
+    }
+
     CSC *matrix = malloc(sizeof(CSC));
     if (!matrix){
         printf("Error : Failed to allocate a CSC \n");
+        destroy_entries(entries);
         return NULL;
     }
 
-    FILE *fptr = fopen(inputfile, "r");
-    if(!fptr){
-        printf("Error : Failed to open %s\n", inputfile);
-        free(matrix);
-        return NULL;
-    }
+    matrix->nbCols = entries->nbCols;
+    matrix->nbRows = entries->nbRows;
+    matrix->nnz = entries->nnz;
 
-    if(fscanf(fptr, "%d %d %d", &matrix->nbRows, &matrix->nbCols, &matrix->nnz) != 3){
-        printf("Error : Failed to read file : Corrupted file\n");
-        free(matrix);
-        fclose(fptr);
-        return NULL;
-    }
-
-    // Initialisation array p (colonnes). Taille = # colonnes + 1
     matrix->p = malloc((matrix->nbCols+1) * sizeof(int));
     if (!matrix->p){
         printf("Error : Failed to allocate p array\n");
+        destroy_entries(entries);
         free(matrix);
-        fclose(fptr);
         return NULL;
     }
 
-    // Initialisation array i (lignes). Taille = # non-zeros
     matrix->i = malloc(matrix->nnz * sizeof(int));
-    if (!matrix->i){
+    if(!matrix->i){
         printf("Error : Failed to allocate i array\n");
+        destroy_entries(entries);
         free(matrix->p);
         free(matrix);
-        fclose(fptr);
         return NULL;
     }
 
-    // Initialisation array x (non-nuls). Taille = # non-zeros
     matrix->x = malloc(matrix->nnz * sizeof(double));
     if (!matrix->x){
         printf("Error : Failed to allocate x array\n");
-        free(matrix->i);
+        destroy_entries(entries);
         free(matrix->p);
+        free(matrix->i);
         free(matrix);
-        fclose(fptr);
         return NULL;
     }
 
-    MatrixInput* entries = create_input_matrix(matrix, fptr);
+    // Trier les données en fonction des colonnes    
+    mergeSort(entries->rows, entries->cols, entries->values, matrix->nnz);
 
-    if(!entries){
-        return NULL;
-    }
-
-    //mergeSort(entries->rows, entries->cols, entries->values, matrix->nnz);
-    quickSortIterativeMatrix(entries->rows,entries->cols, entries->values, 0, matrix->nnz - 1);
-
+    // Remplissage des données dans la matrice CSC
     while(index < matrix->nnz){
 
         matrix->x[index] = entries->values[index];
@@ -172,13 +166,13 @@ CSC *create_sparse_matrix(char *inputfile){
 
             if(entries->cols[index] - currCol > 1){
                 for (int j = 0; j < entries->cols[index]-currCol - 1; j++){
-                    
+
                     matrix->p[indexCol++] = index + 1;
                 }
             }
-            
+
             matrix->p[indexCol++] = index + 1;
-            
+
             currCol = entries->cols[index];
         }
 
@@ -186,47 +180,41 @@ CSC *create_sparse_matrix(char *inputfile){
     }
 
     matrix->p[indexCol] = index + 1;
-
-    fclose(fptr);   
-
-    free(entries->rows);
-    free(entries->cols);
-    free(entries->values);
-    free(entries);
-
+    for (int i = indexCol+1; i < matrix->nbCols + 1; i++){
+      matrix->p[i] = matrix->p[indexCol];
+    }
+    
+    destroy_entries(entries);
+   
     return matrix;
 }
 
 unsigned short csc_to_file(CSC *matrix, char *filename){
-    assert(matrix != NULL && matrix->p != NULL && matrix->i != NULL && matrix->i != NULL && filename != NULL);
-
-    int nz = 0;
-
+    assert(matrix != NULL && filename != NULL);
     FILE *fw = fopen(filename, "w");
     if (!fw){
         printf("Error : Failed to open %s\n", filename);
         return 0;
     }
-
-    fprintf(fw, "%d %d %d\n", matrix->nbRows, matrix->nbCols, matrix->nnz);
     
+    fprintf(fw, "%d %d %d\n", matrix->nbRows, matrix->nbCols, matrix->nnz);
+   
+    unsigned int nz = 0;
     for (int i = 0; i <= matrix->nbCols-1 && nz < matrix->nnz ;i++){
         for(int j = matrix->p[i]; j <= matrix->p[i+1] - 1; j++){
-            fprintf(fw, "%d %d %lf\n", matrix->i[j-START], i+START, matrix->x[j-START]);           
-            nz++; 
+            fprintf(fw, "%d %d %lf\n", matrix->i[j-START], i+START, matrix->x[j-START]);
+            nz += 1;
         }
     }
-
     fclose(fw);
-
     return 1;
 }
 
-void destroy_matrix(CSC *matrix){
-    assert(matrix != NULL && matrix->p != NULL && matrix->i != NULL && matrix->x != NULL);
 
-    free(matrix->p);
+void destroy_matrix(CSC *matrix){
+    assert(matrix != NULL && matrix->i != NULL && matrix->x != NULL && matrix->p != NULL);
     free(matrix->i);
     free(matrix->x);
+    free(matrix->p);
     free(matrix);
 }

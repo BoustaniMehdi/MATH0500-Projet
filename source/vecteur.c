@@ -14,80 +14,62 @@
 
 // ------------------------------------------------------------------------------------------- //
 
-SparseVector *create_sparse_vector(double *vector, unsigned int n){
-    assert(vector != NULL && n > 0);
-
-    unsigned int nonZeros = 0, index = 0;
-
-    SparseVector *vect = malloc(sizeof(SparseVector));
-
+sparseVector *create_sparse_vector(double *vector, unsigned int n){
+    assert(vector != NULL);
+    sparseVector *vect = malloc(sizeof(sparseVector));
     if (!vect){
         printf("Error creating a sparse vector : Allocation of sparse vector failed \n");
         return NULL;
     }
-    
+    unsigned int nonZeros = 0;
     vect->size = n;
-
-    for (unsigned int i = 0; i < n; i++){
+    for (int i = 0; i < n; i++){
         if ( fabs(vector[i]) > TOLVECT && vector[i] != 0 ){
             nonZeros += 1;
         }
     }
-
     vect->nnz = nonZeros;
-
     vect->i = malloc(nonZeros * sizeof(int));
-
     if (!vect->i){
         free(vect);
         printf("Error creating a sparse vector : Allocation of V.i failed\n");
         return NULL;
     }
-
     vect->x = malloc(nonZeros * sizeof(double));
-
     if (!vect->x){
         free(vect->i);
         free(vect);
         printf("Error creating a sparse vector : Allocation of V.x failed\n");
         return NULL;
     }
-    
-    for (unsigned int j = 0; j < n; j++){
+    unsigned int index = 0;
+    for (int j = 0; j < n; j++){
         if(fabs(vector[j]) > TOLVECT && vector[j] != 0){
             vect->x[index] = vector[j];
             vect->i[index] = j;
             index++;
         }
     }
-
     return vect;
 }
 
-unsigned short vector_to_file(SparseVector *vect, char *filename){
-    assert(vect != NULL && vect->i != NULL && vect->x != NULL && filename != NULL);
-
+unsigned short vector_to_file(sparseVector *vect, char *filename){
+    assert(vect != NULL && filename != NULL);
     FILE *fw = fopen(filename, "w");
-
     if (!fw){
         printf("Error : Failed to open %s\n", filename);
         return 0;
     }
-
     fprintf(fw, "%d %d\n", vect->size, vect->nnz);
-
     for (int i = 0; i < vect->nnz; i++ ){
         fprintf(fw, "%d %e\n", vect->i[i], vect->x[i]);
     }
-
     fclose(fw);
-
     return 1;
 }
 
-void destroy_vector(SparseVector *vect){
-    assert(vect != NULL && vect->x != NULL && vect->i != NULL);
-
+void destroy_vector(sparseVector *vect){
+    assert(vect != NULL && vect->x != NULL && vect->i);
     free(vect->x);
     free(vect->i);
     free(vect);
@@ -121,26 +103,21 @@ void copy_vector(double *source, double *dest, int n){
 }
 
 double *divide_vect_scalar(double *vect, int n, double scalaire){
-    assert(vect != NULL && n > 0 && scalaire != 0);
-
+    assert(vect != NULL);
     for (int i = 0; i < n; i++){
         vect[i] /= scalaire;
     }
-
     return vect;
 }
 
 // Changement : prendre la valeur reelle et non la valeur absolue
 double get_largest_module(double *vect, int n){ // norme 0 = nnz
-    assert(vect != NULL && n > 0);
-
+    assert(vect != NULL);
     double max = fabs(vect[0]); 
-
     for (int i = 1; i < n; i++){
         if (fabs(vect[i]) > fabs(max)){ // CHANGEMENT ICI : ON COMPARE LA VALEUR ABSOLUE MAIS ON PREND LA VALEUR REELLE
             max = (vect[i]);
         }
     }
-
     return max;
 }

@@ -8,7 +8,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "matrice.h"
 #include "produit.h"
+#include "vecteur.h"
+#include "valeur_propre.h"
 
 int main(int argc, char *argv[]){
 
@@ -18,22 +21,23 @@ int main(int argc, char *argv[]){
     }
 
     if(strcmp(argv[0], "./produit") == 0){
-        // MATRICE A 
-        CSC *A = create_sparse_matrix("neos2.A.mtx");
+        // MATRICE A
+        CSC *A = create_sparse_matrix("Matrices/self.A.mtx");
         if (!A){
             printf("Failed to create A \n");
             return 1;
         }
-
-        // MATRICE B
-        CSC *B = create_sparse_matrix("neos2.B.mtx");
+       
+        // // MATRICE B
+        CSC *B = create_sparse_matrix("Matrices/self.B.mtx");
         if (!B){
             printf("Failed to create B\n");
             destroy_matrix(A);
             return 1;
         }
 
-        // Produit A x B
+
+        // // Produit A x B
         CSC *C = matrix_matrix_product(A, B);
         if (!C){
             printf("Product A x B failed\n");
@@ -41,50 +45,53 @@ int main(int argc, char *argv[]){
             destroy_matrix(B);
             return 1;
         }
-
+     
         // Ecriture de C dans un fichier
-        csc_to_file(C, "brand.C.mtx");
+        char *filename = "self.C.mtx";
+        unsigned short success = csc_to_file(C, filename);
+        if (success){
+            printf("A x B was successfully written in %s\n", filename);
+        }
 
         destroy_matrix(A);
         destroy_matrix(B);
         destroy_matrix(C);
     }
 
-    else if (strcmp(argv[0], "./puissance") == 0){
-        printf("cc");
-        // MATRICE A
-        CSC *A = create_sparse_matrix("Matrices/brand.A.mtx");
-        if (!A){
-            printf("Failed to create matrix\n");
-            return 1;
-        }
-        // Methode de la puissance
-        unsigned int n = A->nbCols;
-        double eigenValue = 0;
-        double *eigenVector = get_eigen_vector(A, &eigenValue);
-        if (!eigenVector){
-            printf("Failed to get the dominant eigen value\n");
-            destroy_matrix(A);
-            return 1;
-        }
-        printf("Dominant eigen value : %lf\n", eigenValue);
+    // else if (strcmp(argv[0], "./puissance") == 0){
+    //     // MATRICE A
+    //     CSC *A = create_matrix("Matrices/brand.A.mtx");
+    //     // if (!A){
+    //     //     printf("Failed to create matrix\n");
+    //     //     return 1;
+    //     // }
+    //     // // Methode de la puissance
+    //     // unsigned int n = A->nbCols;
+    //     // double eigenValue = 0;
+    //     // double *eigenVector = get_eigen_vector(A, &eigenValue);
+    //     // if (!eigenVector){
+    //     //     printf("Failed to get the dominant eigenvalue\n");
+    //     //     destroy_matrix(A);
+    //     //     return 1;
+    //     // }
+    //     // printf("Dominant eigenvalue : %lf\n", eigenValue);
 
-        // Transformer le vecteur en vecteur creux
-        SparseVector *sparseEigenVector = create_sparse_vector(eigenVector, n);
-        if (!sparseEigenVector){
-            printf("Failed to create sparse eigen vector\n");
-            destroy_matrix(A);
-            free(eigenVector);
-            return 1;
-        }
+    //     // // Transformer le vecteur en vecteur creux
+    //     // sparseVector *sparseEigenVector = create_sparse_vector(eigenVector, n);
+    //     // if (!sparseEigenVector){
+    //     //     printf("Failed to create sparse eigenvector\n");
+    //     //     destroy_matrix(A);
+    //     //     free(eigenVector);
+    //     //     return 1;
+    //     // }
 
-        // Ecrire le vecteur creux dans un fichier
-        vector_to_file(sparseEigenVector, "brandeigen.A.mtx");
+    //     // // Ecrire le vecteur creux dans un fichier
+    //     // vector_to_file(sparseEigenVector, "brandeigen.A.mtx");
 
-        free(eigenVector);
-        destroy_vector(sparseEigenVector);
-        destroy_matrix(A);
-    }
+    //     // free(eigenVector);
+    //     // destroy_vector(sparseEigenVector);
+    //     destroy_matrix(A);
+    // }
 
     else{
         printf("Problème lors de l'exécution du programme\n");
