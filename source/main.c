@@ -17,7 +17,7 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    if(strcmp(argv[0], "./produit") == 0){
+    if(strcmp(argv[0], "./multiplication") == 0){
         // NB : Multiplication doit être faite entre une matrice de type A et B 
       
         // MATRICE A
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
         destroy_matrix(C);
     }
 
-     else if (strcmp(argv[0], "./puissance") == 0){
+     else if (strcmp(argv[0], "./vecteur") == 0){
 
         // MATRICE A
         CSC *A = create_sparse_matrix("matrice.A.mtx"); // Vous pouvez entrer le nom de la matrice A ici
