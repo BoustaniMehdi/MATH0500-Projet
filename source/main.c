@@ -8,10 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "matrice.h"
 #include "produit.h"
-#include "vecteur.h"
-#include "valeur_propre.h"
 
 int main(int argc, char *argv[]){
 
@@ -22,14 +19,14 @@ int main(int argc, char *argv[]){
 
     if(strcmp(argv[0], "./produit") == 0){
         // MATRICE A
-        CSC *A = create_sparse_matrix("Matrices/self.A.mtx");
+        CSC *A = create_sparse_matrix("neos2.A.mtx");
         if (!A){
             printf("Failed to create A \n");
             return 1;
         }
        
         // // MATRICE B
-        CSC *B = create_sparse_matrix("Matrices/self.B.mtx");
+        CSC *B = create_sparse_matrix("neos2.B.mtx");
         if (!B){
             printf("Failed to create B\n");
             destroy_matrix(A);
@@ -47,8 +44,10 @@ int main(int argc, char *argv[]){
         }
      
         // Ecriture de C dans un fichier
-        char *filename = "self.C.mtx";
+        char *filename = "produit.mtx";
+
         unsigned short success = csc_to_file(C, filename);
+
         if (success){
             printf("A x B was successfully written in %s\n", filename);
         }
@@ -58,43 +57,47 @@ int main(int argc, char *argv[]){
         destroy_matrix(C);
     }
 
-    // else if (strcmp(argv[0], "./puissance") == 0){
-    //     // MATRICE A
-    //     CSC *A = create_matrix("Matrices/brand.A.mtx");
-    //     // if (!A){
-    //     //     printf("Failed to create matrix\n");
-    //     //     return 1;
-    //     // }
-    //     // // Methode de la puissance
-    //     // unsigned int n = A->nbCols;
-    //     // double eigenValue = 0;
-    //     // double *eigenVector = get_eigen_vector(A, &eigenValue);
-    //     // if (!eigenVector){
-    //     //     printf("Failed to get the dominant eigenvalue\n");
-    //     //     destroy_matrix(A);
-    //     //     return 1;
-    //     // }
-    //     // printf("Dominant eigenvalue : %lf\n", eigenValue);
+     else if (strcmp(argv[0], "./puissance") == 0){
+         // MATRICE A
+        CSC *A = create_sparse_matrix("produit.mtx");
+        if (!A){
+            printf("Failed to create matrix\n");
+            return 1;
+        }
 
-    //     // // Transformer le vecteur en vecteur creux
-    //     // sparseVector *sparseEigenVector = create_sparse_vector(eigenVector, n);
-    //     // if (!sparseEigenVector){
-    //     //     printf("Failed to create sparse eigenvector\n");
-    //     //     destroy_matrix(A);
-    //     //     free(eigenVector);
-    //     //     return 1;
-    //     // }
+        // Methode de la puissance
+        unsigned int n = A->nbCols;
+        double eigenValue = 0;
+        double *eigenVector = get_eigen_vector(A, &eigenValue);
 
-    //     // // Ecrire le vecteur creux dans un fichier
-    //     // vector_to_file(sparseEigenVector, "brandeigen.A.mtx");
+        if (!eigenVector){
+            printf("Failed to get the dominant eigen value\n");
+            destroy_matrix(A);
+            return 1;
+        }
 
-    //     // free(eigenVector);
-    //     // destroy_vector(sparseEigenVector);
-    //     destroy_matrix(A);
-    // }
+        printf("Dominant eigen value : %lf\n", eigenValue);
+
+        // Transformer le vecteur en vecteur creux
+        SparseVector *sparseEigenVector = create_sparse_vector(eigenVector, n);
+        if (!sparseEigenVector){
+            printf("Failed to create sparse eigen vector\n");
+            destroy_matrix(A);
+            free(eigenVector);
+            return 1;
+        }
+
+        // Ecrire le vecteur creux dans un fichier
+        vector_to_file(sparseEigenVector, "vecteur.mtx");
+
+        free(eigenVector);
+
+        destroy_vector(sparseEigenVector);
+        destroy_matrix(A);
+    }
 
     else{
-        printf("Problème lors de l'exécution du programme\n");
+        printf("Problem while executing the program\n");
     }
 
     return 0;

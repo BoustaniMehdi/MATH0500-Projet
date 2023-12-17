@@ -12,6 +12,7 @@
 #include "tri.h"
 
 static MatrixInput *get_entries_input(char *filename);
+
 static void destroy_entries(MatrixInput *entries);
 
 static void destroy_entries(MatrixInput *entries){
@@ -26,6 +27,7 @@ static void destroy_entries(MatrixInput *entries){
 
 static MatrixInput *get_entries_input(char *filename){
     assert(filename != NULL);
+
     int row = 0, col = 0, index = 0, indexEntries = 0;
     double value = 0;
 
@@ -77,7 +79,6 @@ static MatrixInput *get_entries_input(char *filename){
     }
 
     while (index < entries->nnz){
-        printf("%d\n", index);
         if(fscanf(fptr, "%d %d %lf", &row, &col, &value) != 3){
             printf("Error reading file : Incomplete or corrupted file\n");
             fclose(fptr);
@@ -87,6 +88,7 @@ static MatrixInput *get_entries_input(char *filename){
             free(entries);
             return NULL;
         }
+
         // Ne pas prendre en compte les zeros dans le fichier
         if (value != 0){
             entries->rows[indexEntries] = row;
@@ -98,15 +100,16 @@ static MatrixInput *get_entries_input(char *filename){
         index ++;
     }
     entries->nnz = indexEntries;
+
     fclose(fptr);
+
     return entries;
 }
 
 CSC *create_sparse_matrix(char *inputfile){
     assert(inputfile != NULL);
 
-    int row = 0, col = 0, currCol = 0, indexCol = 0, index = 0;
-    double value = 0;
+    int currCol = 0, indexCol = 0, index = 0;
 
     // Chercher les données du fichier
     MatrixInput *entries = get_entries_input(inputfile);
@@ -180,6 +183,7 @@ CSC *create_sparse_matrix(char *inputfile){
     }
 
     matrix->p[indexCol] = index + 1;
+
     for (int i = indexCol+1; i < matrix->nbCols + 1; i++){
       matrix->p[i] = matrix->p[indexCol];
     }
@@ -190,7 +194,10 @@ CSC *create_sparse_matrix(char *inputfile){
 }
 
 unsigned short csc_to_file(CSC *matrix, char *filename){
-    assert(matrix != NULL && filename != NULL);
+    assert(matrix != NULL && matrix->p != NULL && matrix->i != NULL && matrix->x != NULL && filename != NULL);
+
+    int nz = 0;
+
     FILE *fw = fopen(filename, "w");
     if (!fw){
         printf("Error : Failed to open %s\n", filename);
@@ -199,20 +206,22 @@ unsigned short csc_to_file(CSC *matrix, char *filename){
     
     fprintf(fw, "%d %d %d\n", matrix->nbRows, matrix->nbCols, matrix->nnz);
    
-    unsigned int nz = 0;
     for (int i = 0; i <= matrix->nbCols-1 && nz < matrix->nnz ;i++){
         for(int j = matrix->p[i]; j <= matrix->p[i+1] - 1; j++){
             fprintf(fw, "%d %d %lf\n", matrix->i[j-START], i+START, matrix->x[j-START]);
             nz += 1;
         }
     }
+
     fclose(fw);
+
     return 1;
 }
 
 
 void destroy_matrix(CSC *matrix){
     assert(matrix != NULL && matrix->i != NULL && matrix->x != NULL && matrix->p != NULL);
+
     free(matrix->i);
     free(matrix->x);
     free(matrix->p);
