@@ -27,7 +27,7 @@ SparseVector *create_sparse_vector(double *vector, unsigned int n){
 
     vect->size = n;
     for (unsigned int i = 0; i < n; i++){
-        if ( fabs(vector[i]) > TOLVECT && vector[i] != 0 ){
+        if (vector[i] != 0 ){
             nonZeros += 1;
         }
     }
@@ -50,7 +50,6 @@ SparseVector *create_sparse_vector(double *vector, unsigned int n){
     }
     
     for (unsigned int j = 0; j < n; j++){
-
         if(vector[j] != 0){
             vect->x[index] = vector[j];
             vect->i[index] = j;
@@ -126,14 +125,13 @@ double *divide_vect_scalar(double *vect, int n, double scalaire){
     return vect;
 }
 
-// Changement : prendre la valeur reelle et non la valeur absolue
-double get_largest_module(double *vect, int n){ // norme 0 = nnz
+double get_largest_module(double *vect, int n){ 
     assert(vect != NULL && n > 0);
 
     double max = fabs(vect[0]); 
 
     for (int i = 1; i < n; i++){
-        if (fabs(vect[i]) > fabs(max)){ // CHANGEMENT ICI : ON COMPARE LA VALEUR ABSOLUE MAIS ON PREND LA VALEUR REELLE
+        if (fabs(vect[i]) > fabs(max)){ 
             max = (vect[i]);
         }
     }
