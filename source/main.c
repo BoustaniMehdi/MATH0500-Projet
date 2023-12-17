@@ -21,14 +21,14 @@ int main(int argc, char *argv[]){
         // NB : Multiplication doit être faite entre une matrice de type A et B 
       
         // MATRICE A
-        CSC *A = create_sparse_matrix("Matrices/watson_2.A.mtx"); // Vous pouvez entrer le nom de la matrice A ici
+        CSC *A = create_sparse_matrix("matrice.A.mtx"); // Vous pouvez entrer le nom de la matrice A ici
         if (!A){
             printf("Failed to create A \n");
             return 1;
         }
        
         // MATRICE B
-        CSC *B = create_sparse_matrix("Matrices/watson_2.B.mtx"); // Vous pouvez entrer le nom de la matrice B ici
+        CSC *B = create_sparse_matrix("matrice.B.mtx"); // Vous pouvez entrer le nom de la matrice B ici
         if (!B){
             printf("Failed to create B\n");
             destroy_matrix(A);
@@ -61,7 +61,7 @@ int main(int argc, char *argv[]){
      else if (strcmp(argv[0], "./puissance") == 0){
 
         // MATRICE A
-        CSC *A = create_sparse_matrix("self.B.mtx"); // Vous pouvez entrer le nom de la matrice A ici
+        CSC *A = create_sparse_matrix("matrice.A.mtx"); // Vous pouvez entrer le nom de la matrice A ici
         if (!A){
             printf("Failed to create matrix\n");
             return 1;
